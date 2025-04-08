@@ -436,5 +436,107 @@
       "categories": []
     },
     "gallery": []
+  },
+  "9e8ea163-2f3a-4d78-9a75-d3d2b799910a": {
+    "id": "9e8ea163-2f3a-4d78-9a75-d3d2b799910a",
+    "name": "11",
+    "type": "cafe",
+    "logo": "/static/uploads/logos/9e8ea163-2f3a-4d78-9a75-d3d2b799910a",
+    "description": "1",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "1",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "1",
+      "email": "1@vs.dsc",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "801103ed-0948-4386-badd-151bcd889585": {
+    "id": "801103ed-0948-4386-badd-151bcd889585",
+    "name": "11",
+    "type": "cafe",
+    "logo": "/static/uploads/logos/801103ed-0948-4386-badd-151bcd889585",
+    "description": "1",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "1",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "1",
+      "email": "1@vs.dsc",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "7610f52c-2506-433e-9139-768e26965cd0": {
+    "id": "7610f52c-2506-433e-9139-768e26965cd0",
+    "name": "11",
+    "type": "cafe",
+    "logo": "/static/uploads/logos/7610f52c-2506-433e-9139-768e26965cd0",
+    "description": "1",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "1",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "1",
+      "email": "1@vs.dsc",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
   }
 }
