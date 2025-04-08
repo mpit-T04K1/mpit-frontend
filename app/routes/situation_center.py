@@ -1,3 +1,4 @@
+from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -9,6 +10,14 @@ from pathlib import Path as PathLib
 # Настройка шаблонов
 templates_dir = PathLib(__file__).resolve().parent.parent / "templates"
 templates = Jinja2Templates(directory=str(templates_dir))
+def https_url_for(name: str, **path_params: Any) -> str:
+    url = os.getenv("MAIN_PATH") + name
+    if path_params:
+        params = [f"{name}={value}" for name, value in path_params.items()]
+        url += "?" + "&".join(params)
+    return url
+
+templates.env.globals["https_url_for"] = https_url_for
 
 # Создаем роутер для ситуационного центра
 router = APIRouter(

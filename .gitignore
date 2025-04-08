@@ -78,6 +78,7 @@ celerybeat-schedule
 
 # Virtual environments
 venv/
+.venv/
 ENV/
 env/
 
@@ -112,7 +113,6 @@ app/static/uploads/
 # Файлы с конфигурациями
 *.env
 .env
-.env.example
 
 # Temporary fix scripts
 *fix*.py

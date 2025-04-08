@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
 import logging
-import asyncio
+import uvicorn
 import os
 from pathlib import Path
 
@@ -58,7 +58,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 if __name__ == "__main__":
-    import uvicorn
+    
     
     # Запуск сервера
     uvicorn.run(
