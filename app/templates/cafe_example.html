@@ -125,7 +125,7 @@
                                 <!-- Остальные варианты времени -->
                             </select>
                         </div>
-                        <button type="button" class="btn btn-sm w-100" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white;">Забронировать</button>
+                        <button type="submit" class="btn btn-sm w-100" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white;">Забронировать</button>
                     </form>
                 </div>
             </div>
@@ -389,11 +389,11 @@
         });
         
         // Скрываем описание при клике вне меню
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.menu-item') && !e.target.closest('#menu-item-info')) {
-                hideMenuItemInfo();
-            }
-        });
+        // document.addEventListener('click', function(e) {
+        //     if (!e.target.closest('.menu-item') && !e.target.closest('#menu-item-info')) {
+        //         hideMenuItemInfo();
+        //     }
+        // });
     });
 </script>
 {% endblock %}
