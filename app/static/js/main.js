@@ -266,12 +266,12 @@ function createMapModal() {
     bsModal.show();
 }
 
-let center = [54.70791733407478,20.50576650051002]
+let center = [54.70805096669561,20.50560278768957]
 
 function init (){
     let map = new ymaps.Map('demo-map' , {
         center: center,
-        zoom: 19,
+        zoom: 39,
         controls:['routePanelControl']
     });
 
@@ -329,7 +329,7 @@ function init (){
 
     const options = {
         enableHighAccuracy: true,
-        timeout: 5000,
+        timeout: 10000,
     };
       
     function success(pos) {
