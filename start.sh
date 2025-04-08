@@ -5,11 +5,11 @@ echo
 
 # Остановка предыдущих контейнеров
 echo "Остановка предыдущих контейнеров..."
-docker compose -f docker/docker-compose.yml down
+docker compose down
 
 # Запуск проекта
 echo "Запуск проекта..."
-docker compose -f docker/docker-compose.yml up -d
+docker compose up -d
 
 if [ $? -ne 0 ]; then
     echo "Ошибка при запуске проекта"
@@ -21,7 +21,7 @@ sleep 5
 
 # Проверка доступности приложения
 echo "Проверка доступности приложения..."
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8006/)
 
 if [ "$RESPONSE" != "200" ]; then
     echo "Ошибка: приложение недоступно, код ответа: $RESPONSE"
@@ -31,5 +31,5 @@ fi
 echo ""
 echo "=== Проект успешно запущен ==="
 echo "Приложение доступно по адресу:"
-echo "- Веб-интерфейс: http://localhost:8080"
+echo "- Веб-интерфейс: http://localhost:8006"
 echo "- RabbitMQ Management: http://localhost:15672" 

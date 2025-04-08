@@ -8,15 +8,41 @@ import uvicorn
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import json
+from pydantic import BaseModel, Field
+from typing import Dict, List, Optional
+
+# Определение моделей данных для работы с конфигурацией
+class MenuItem(BaseModel):
+    """Модель для позиции меню"""
+    id: str
+    name: str
+    price: float
+    description: Optional[str] = None
+    image: Optional[str] = None
+
+class MenuCategory(BaseModel):
+    """Модель для категории меню"""
+    id: str
+    name: str
+    items: List[MenuItem] = Field(default_factory=list)
+
+class MenuConfig(BaseModel):
+    """Модель конфигурации меню"""
+    categories: List[MenuCategory] = Field(default_factory=list)
+
+class PanelConfig(BaseModel):
+    """Модель конфигурации панелей интерфейса"""
+    business_id: str
+    panels: Dict[str, bool]  # ID панели -> активна/неактивна
+    order: Optional[Dict[str, int]] = None  # ID панели -> порядок отображения
+    menu: Optional[MenuConfig] = None  # Конфигурация меню
 
 # Импортируем маршруты
 from app.routes import business, business_registration, situation_center
 
 # Настройка логирования
-logging.basicConfig(
-    level=logging.DEBUG,  # Изменено с INFO на DEBUG для более подробного логирования
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Загрузка переменных окружения из .env файла
@@ -184,53 +210,298 @@ async def preview_business_page(request: Request):
         )
 
 @app.get("/test", response_class=HTMLResponse)
-async def test_page(request: Request):
+async def test(request: Request):
     """
-    Тестовая страница с данными из JSON
+    Маршрут для тестирования шаблона business.html
     """
-    logger.debug("Обработка запроса к маршруту /test")
+    try:
+        # Проверяем наличие файла с данными бизнеса
+        business_file = os.path.join(BASE_DIR, "data", "businesses.json")
+        logger.debug(f"Пытаемся загрузить данные бизнеса из {business_file}")
+        
+        if os.path.exists(business_file):
+            with open(business_file, "r", encoding="utf-8") as f:
+                businesses_data = json.load(f)
+                
+            if businesses_data:
+                # Получаем последний добавленный бизнес (последний ключ в словаре)
+                last_business_id = list(businesses_data.keys())[-1]
+                business = businesses_data[last_business_id]
+                logger.debug(f"Загружен бизнес: {business.get('name', 'Неизвестный бизнес')}")
+                
+                # Пытаемся загрузить конфигурацию для бизнеса
+                config_file = os.path.join(BASE_DIR, "data", "configs", f"{business['id']}.json")
+                config_dict = None
+                
+                if os.path.exists(config_file):
+                    try:
+                        with open(config_file, "r", encoding="utf-8") as f:
+                            config_dict = json.load(f)
+                            logger.debug(f"Загружена конфигурация для бизнеса")
+                            
+                            # Проверяем структуру конфигурации напрямую
+                            if 'menu' in config_dict and config_dict['menu'] is not None:
+                                logger.debug(f"Меню найдено в конфигурации")
+                                if 'categories' in config_dict['menu'] and config_dict['menu']['categories']:
+                                    logger.debug(f"Найдено категорий меню: {len(config_dict['menu']['categories'])}")
+                                    for i, category in enumerate(config_dict['menu']['categories']):
+                                        logger.debug(f"Категория {i+1}: {category['name']}, элементов: {len(category['items']) if 'items' in category and category['items'] else 0}")
+                                else:
+                                    logger.debug(f"Категории меню не найдены")
+                            else:
+                                logger.debug(f"Меню в конфигурации отсутствует")
+                    except Exception as e:
+                        logger.error(f"Ошибка загрузки конфигурации: {e}")
+                
+                # Если конфигурация не найдена, создаем значение по умолчанию
+                if config_dict is None:
+                    logger.debug("Конфигурация не найдена, создаем значение по умолчанию")
+                    config_dict = {
+                        "business_id": business["id"],
+                        "panels": {
+                            "business-info": True,
+                            "menu": True,
+                            "map": True,
+                            "contacts": True,
+                            "gallery": True
+                        },
+                        "order": None,
+                        "menu": None
+                    }
+                    
+                logger.debug(f"Структура config_dict: {json.dumps(config_dict, ensure_ascii=False)[:200]}...")
+                
+                return templates.TemplateResponse(
+                    "business.html", 
+                    {"request": request, "business": business, "config": config_dict}
+                )
+            else:
+                logger.warning("Файл с данными бизнеса пуст")
+                return templates.TemplateResponse(
+                    "business.html", 
+                    {"request": request, "message": "Нет данных о бизнесе"}
+                )
+        else:
+            logger.warning(f"Файл {business_file} не найден")
+            return templates.TemplateResponse(
+                "business.html", 
+                {"request": request, "message": "Файл с данными бизнеса не найден"}
+            )
+    except Exception as e:
+        logger.error(f"Ошибка при обработке запроса к /test: {e}")
+        return templates.TemplateResponse(
+            "business.html", 
+            {"request": request, "message": f"Произошла ошибка: {e}"}
+        )
+
+@app.get("/test/constructor", response_class=HTMLResponse)
+async def test_constructor_page(request: Request):
+    """
+    Конструктор для тестовой страницы бизнеса
+    """
+    logger.debug("Обработка запроса к маршруту /test/constructor")
+    try:
+        # Проверяем наличие файла с данными бизнеса
+        business_file = os.path.join(BASE_DIR, "data", "businesses.json")
+        logger.debug(f"Пытаемся загрузить данные бизнеса из {business_file}")
+        
+        if os.path.exists(business_file):
+            with open(business_file, "r", encoding="utf-8") as f:
+                businesses_data = json.load(f)
+                
+            if businesses_data:
+                # Получаем последний добавленный бизнес (последний ключ в словаре)
+                last_business_id = list(businesses_data.keys())[-1]
+                business = businesses_data[last_business_id]
+                logger.debug(f"Загружен бизнес: {business.get('name', 'Неизвестный бизнес')}")
+                
+                # Пытаемся загрузить конфигурацию для бизнеса
+                config_file = os.path.join(BASE_DIR, "data", "configs", f"{business['id']}.json")
+                config = None
+                
+                if os.path.exists(config_file):
+                    try:
+                        with open(config_file, "r", encoding="utf-8") as f:
+                            config = json.load(f)
+                            logger.debug(f"Загружена конфигурация для бизнеса")
+                    except Exception as e:
+                        logger.error(f"Ошибка загрузки конфигурации: {e}")
+                
+                return templates.TemplateResponse(
+                    "constructor.html",
+                    {
+                        "request": request, 
+                        "business": business,
+                        "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", ""),
+                        "config": config
+                    }
+                )
+            else:
+                logger.warning("Файл с данными бизнеса пуст")
+                return templates.TemplateResponse(
+                    "constructor.html", 
+                    {
+                        "request": request,
+                        "error": "Нет зарегистрированных бизнесов",
+                        "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
+                    }
+                )
+        else:
+            logger.warning(f"Файл {business_file} не найден")
+            return templates.TemplateResponse(
+                "constructor.html", 
+                {
+                    "request": request,
+                    "error": "Файл данных не найден",
+                    "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
+                }
+            )
+    except Exception as e:
+        logger.error(f"Ошибка при обработке запроса к /test/constructor: {e}")
+        return templates.TemplateResponse(
+            "constructor.html", 
+            {
+                "request": request,
+                "error": str(e),
+                "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
+            }
+        )
+
+@app.get("/constructor", response_class=HTMLResponse)
+async def constructor_page(request: Request):
+    """
+    Страница конструктора меню с данными последнего зарегистрированного бизнеса из JSON
+    """
+    logger.debug("Обработка запроса к маршруту /constructor")
     try:
         # Загружаем данные о бизнесах из JSON файла
-        import json
-        from pathlib import Path
-        
-        # Путь к файлу с данными
-        json_path = Path("app/data/businesses.json")
+        json_path = os.path.join(BASE_DIR, "data", "businesses.json")
         
         # Проверяем существование файла
-        if json_path.exists():
+        if os.path.exists(json_path):
             # Загружаем данные
             with open(json_path, "r", encoding="utf-8") as f:
                 businesses_data = json.load(f)
                 
-            # Берем данные бизнеса "Тестов"
-            test_business_id = "30f4e51e-f701-473e-8620-89059021bd17"
-            if test_business_id in businesses_data:
-                business = businesses_data[test_business_id]
-                logger.info(f"Загружены данные бизнеса: {business['name']}")
+            if businesses_data:
+                # Получаем последний добавленный бизнес (последний ключ в словаре)
+                last_business_id = list(businesses_data.keys())[-1]
+                business = businesses_data[last_business_id]
+                logger.info(f"Загружены данные последнего бизнеса: {business['name']}")
+                
+                # Проверяем наличие конфигурации
+                config_path = os.path.join(BASE_DIR, "data", "configs", f"{business['id']}.json")
+                config = None
+                
+                if os.path.exists(config_path):
+                    try:
+                        with open(config_path, "r", encoding="utf-8") as f:
+                            config = json.load(f)
+                        logger.info(f"Загружена конфигурация для бизнеса: {business['name']}")
+                        logger.debug(f"Содержимое конфигурации: {json.dumps(config, ensure_ascii=False)}")
+                    except Exception as e:
+                        logger.error(f"Ошибка при загрузке конфигурации: {e}")
+                else:
+                    logger.debug(f"Файл конфигурации не найден: {config_path}")
+                
+                return templates.TemplateResponse(
+                    "constructor.html",
+                    {
+                        "request": request, 
+                        "business": business,
+                        "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", ""),
+                        "config": config
+                    }
+                )
             else:
-                # Если нет нужного бизнеса, берем первый из списка
-                business_id = next(iter(businesses_data))
-                business = businesses_data[business_id]
-                logger.info(f"Загружены данные первого бизнеса: {business['name']}")
-            
-            return templates.TemplateResponse(
-                "test_page.html",
-                {"request": request, "business": business}
-            )
+                logger.warning("Файл businesses.json пуст")
+                return templates.TemplateResponse(
+                    "constructor.html",
+                    {
+                        "request": request,
+                        "error": "Нет зарегистрированных бизнесов",
+                        "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
+                    }
+                )
         else:
             logger.error(f"Файл с данными не найден: {json_path}")
-            # Если файл не найден, вернем страницу с сообщением об ошибке
             return templates.TemplateResponse(
-                "test_page.html",
-                {"request": request, "error": "Файл данных не найден"}
+                "constructor.html",
+                {
+                    "request": request,
+                    "error": "Файл данных не найден",
+                    "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
+                }
             )
     except Exception as e:
         logger.error(f"Ошибка при загрузке данных: {e}")
-        # В случае ошибки вернем пустой шаблон
         return templates.TemplateResponse(
-            "test_page.html",
-            {"request": request, "error": str(e)}
+            "constructor.html",
+            {
+                "request": request,
+                "error": str(e),
+                "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
+            }
+        )
+
+@app.post("/api/save-config")
+async def save_config(config: PanelConfig):
+    """
+    Сохраняет конфигурацию панелей для бизнеса
+    """
+    try:
+        logger.info(f"Обработка запроса на сохранение конфигурации в main.py для бизнеса {config.business_id}")
+        logger.debug(f"Данные конфигурации: {config.dict()}")
+        
+        # Создаем директорию для конфигураций, если её нет
+        config_dir = os.path.join(BASE_DIR, "data", "configs")
+        os.makedirs(config_dir, exist_ok=True)
+        
+        # Путь к файлу конфигурации
+        config_path = os.path.join(config_dir, f"{config.business_id}.json")
+        
+        # Сохраняем конфигурацию
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(config.dict(), f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"Сохранена конфигурация для бизнеса {config.business_id}")
+        
+        # Обновляем данные бизнеса, если есть меню в конфигурации
+        if config.menu and hasattr(config.menu, 'categories'):
+            try:
+                # Путь к файлу с данными бизнеса
+                business_file = os.path.join(BASE_DIR, "data", "businesses.json")
+                
+                # Загружаем данные о бизнесах
+                if os.path.exists(business_file):
+                    with open(business_file, "r", encoding="utf-8") as f:
+                        businesses = json.load(f)
+                    
+                    # Обновляем меню бизнеса если он существует
+                    if config.business_id in businesses:
+                        # Преобразуем категории меню в формат для JSON
+                        categories_dict = []
+                        for category in config.menu.categories:
+                            category_dict = category.dict()
+                            categories_dict.append(category_dict)
+                        
+                        # Обновляем меню
+                        businesses[config.business_id]["menu"] = {"categories": categories_dict}
+                        
+                        # Сохраняем обновленные данные
+                        with open(business_file, "w", encoding="utf-8") as f:
+                            json.dump(businesses, f, ensure_ascii=False, indent=2)
+                        
+                        logger.info(f"Обновлены данные меню в файле бизнеса для {config.business_id}")
+            except Exception as e:
+                logger.error(f"Ошибка при обновлении данных бизнеса: {e}")
+        
+        return {"status": "success", "message": "Конфигурация успешно сохранена"}
+    except Exception as e:
+        logger.error(f"Ошибка при сохранении конфигурации: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": str(e)}
         )
 
 # Обработчик ошибок

@@ -436,5 +436,223 @@
       "categories": []
     },
     "gallery": []
+  },
+  "d8fd933e-9aed-415c-84d7-62023906e0c1": {
+    "id": "d8fd933e-9aed-415c-84d7-62023906e0c1",
+    "name": "Тестов",
+    "type": "shop",
+    "logo": "/static/uploads/logos/d8fd933e-9aed-415c-84d7-62023906e0c1.png",
+    "description": "Гога",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "прол",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "99567003-7008-463b-9f78-ba4ac41d92a3": {
+    "id": "99567003-7008-463b-9f78-ba4ac41d92a3",
+    "name": "Jkl;",
+    "type": "restaurant",
+    "logo": "/static/uploads/logos/99567003-7008-463b-9f78-ba4ac41d92a3",
+    "description": "dfghjikol",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "fghjkl;",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "45678",
+      "email": "it@mail.com",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "547b8038-f613-4ef4-9c40-886d62ca5b9f": {
+    "id": "547b8038-f613-4ef4-9c40-886d62ca5b9f",
+    "name": "sdfghjklkmjhgvcvbhnjmk,lkmjnhbvcxvgbhjk",
+    "type": "cafe",
+    "logo": "/static/uploads/logos/547b8038-f613-4ef4-9c40-886d62ca5b9f.png",
+    "description": "JGjgjdgjdd",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "Гога",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "it@eazyan.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "a2193e02-f37c-4d1a-b92b-d17535f61c60": {
+    "id": "a2193e02-f37c-4d1a-b92b-d17535f61c60",
+    "name": "Джинсы",
+    "type": "shop",
+    "logo": "/static/uploads/logos/a2193e02-f37c-4d1a-b92b-d17535f61c60",
+    "description": "мит",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "Гога",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "b94f1340-5e69-4d48-b208-5ff2fd9fa78c": {
+    "id": "b94f1340-5e69-4d48-b208-5ff2fd9fa78c",
+    "name": "Джинсы",
+    "type": "shop",
+    "logo": "/static/uploads/logos/b94f1340-5e69-4d48-b208-5ff2fd9fa78c",
+    "description": "мит",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "Гога",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "1b738c4c-79c5-41b8-ae44-c8ac4922d281": {
+    "id": "1b738c4c-79c5-41b8-ae44-c8ac4922d281",
+    "name": "Джинсы",
+    "type": "shop",
+    "logo": "/static/uploads/logos/1b738c4c-79c5-41b8-ae44-c8ac4922d281",
+    "description": "мит",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "Гога",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": [
+        {
+          "id": "id_test123",
+          "name": "Тестовая категория",
+          "items": [
+            {
+              "id": "id_item123",
+              "name": "Тестовый товар",
+              "price": 1500.0,
+              "description": "Тестовое описание товара",
+              "image": null
+            }
+          ]
+        }
+      ]
+    },
+    "gallery": []
   }
 }

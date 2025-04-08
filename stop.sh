@@ -3,6 +3,6 @@
 echo "=== Остановка Kaliningrad ==="
 
 # Остановка контейнеров
-docker compose -f docker/docker-compose.yml down
+docker compose down
 
 echo "Проект успешно остановлен" 
