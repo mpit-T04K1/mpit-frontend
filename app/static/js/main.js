@@ -266,68 +266,119 @@ function createMapModal() {
     bsModal.show();
 }
 
-/**
- * Загрузка скрипта Яндекс.Карт
- */
-function loadYandexMapsScript() {
-    return new Promise((resolve, reject) => {
-        // Проверяем, загружен ли уже скрипт
-        if (window.ymaps) {
-            resolve();
-            return;
-        }
-        
-        // Получаем API ключ из страницы
-        const apiKey = document.documentElement.getAttribute('data-yandex-maps-api-key');
-        
-        // Создаем элемент скрипта
-        const script = document.createElement('script');
-        script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
-        script.async = true;
-        
-        // Добавляем обработчики событий
-        script.onload = resolve;
-        script.onerror = reject;
-        
-        // Добавляем скрипт в DOM
-        document.head.appendChild(script);
+let center = [54.70791733407478,20.50576650051002]
+
+function init (){
+    let map = new ymaps.Map('demo-map' , {
+        center:center,
+        zoom: 19,
+        controls:['routePanelControl']
     });
+
+    // let placemark = new ymaps.Placemark(center,{
+    //     balloonContentHeader: 'Хедер',
+    //     balloonContentBody: 'боди',
+    //     balloonContentFooter: 'футер'
+    // },{
+    //     iconLayout:'default#image',
+    //     iconImageHref: "img/free-icon-map-location-7743571.png",
+    //     iconImageSize: [40,40],
+    //     iconImageOffset: [-20,-30]
+    // });
+
+    let placemark1 = new ymaps.Placemark(center,{
+        balloonContent: `
+            <div class=balloon>
+                <div class="adress"> Мы сюда едем</div>
+                <div class="contact">
+                    <a href="">AAAAAA</a>
+                </div>
+            </div>
+        `
+    },{
+        iconLayout:'default#image',
+        iconImageHref: "img/free-icon-map-location-7743571.png",
+        iconImageSize: [40,40],
+        iconImageOffset: [-20,-30]
+    });
+
+    let control = map.controls.get('routePanelControl');
+    // let location = ymaps.geolocation.get();
+
+    // location.then(function(res){
+    //     let locationText = res.geoObjects.get(0).properties.get('text');
+    //     console.log(locationText);
+
+    //     control.routePanel.state.set({
+    //         type: 'auto',
+    //         fromEnabled: true,
+    //         from: locationText,
+    //         toEnabled: true,
+    //         to: center
+    //     });
+    
+    //     control.routePanel.options.set({
+    //         types:{
+    //             masstransit: true,
+    //             pedestrian: true,
+    //             auto: true,
+    //             taxi: true
+    //         }
+    //     });
+    // });
+
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+    };
+      
+    function success(pos) {
+        const crd = pos.coords;
+      
+        console.log(`Latitude : ${crd.latitude}`);
+        console.log(`Longitude: ${crd.longitude}`);
+
+        let reverseGeocoder = ymaps.geocode([crd.latitude, crd.longitude]);
+        let locationText = null;
+
+        reverseGeocoder.then(function(res){
+            locationText = res.geoObjects.get(0).properties.get('text');
+
+            control.routePanel.state.set({
+                type: 'auto',
+                fromEnabled: true,
+                from: locationText,
+                toEnabled: true,
+                to: center
+            });
+        });
+
+
+        control.routePanel.options.set({
+            types:{
+                masstransit: true,
+                pedestrian: true,
+                auto: true,
+                taxi: true
+            }
+        });
+    }
+      
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+      
+    navigator.geolocation.getCurrentPosition(success, error, options);
+
+    
+
+    // map.geoObjects.add(placemark1);
+    placemark1.balloon.open();
 }
 
-/**
- * Инициализация карты Яндекс.Карт
- */
-function initializeYandexMap() {
-    // Ждем, пока API Яндекс.Карт полностью загрузится
-    ymaps.ready(function() {
-        // Создаем карту
-        const map = new ymaps.Map('yandexMap', {
-            center: [55.76, 37.64], // Москва
-            zoom: 10,
-            controls: ['zoomControl', 'searchControl', 'fullscreenControl']
-        });
-        
-        // Создаем менеджер объектов для эффективного отображения большого количества меток
-        const objectManager = new ymaps.ObjectManager({
-            clusterize: true,
-            gridSize: 32,
-            clusterDisableClickZoom: false
-        });
-        
-        // Добавляем менеджер объектов на карту
-        map.geoObjects.add(objectManager);
-        
-        // Загружаем компании для отображения на карте
-        loadCompaniesForMap(objectManager);
-        
-        // Загружаем города и типы бизнеса для фильтров
-        loadCitiesForFilter();
-        loadBusinessTypesForFilter();
-        
-        // Настраиваем обработчики событий для фильтров
-        setupMapFilters(objectManager);
-    });
-}
+ymaps.ready(init);
+
+
 
 /**
  * Загрузка компаний для отображения на карте
