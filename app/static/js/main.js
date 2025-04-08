@@ -270,7 +270,7 @@ let center = [54.70791733407478,20.50576650051002]
 
 function init (){
     let map = new ymaps.Map('demo-map' , {
-        center:center,
+        center: center,
         zoom: 19,
         controls:['routePanelControl']
     });
