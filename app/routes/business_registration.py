@@ -1,12 +1,17 @@
+from typing import Optional
 from fastapi import APIRouter, Request, Form, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-import os
 import uuid
-import json
 from pathlib import Path
 from app.utils.ai_utils import FusionBrainAPI
+
+from sqlalchemy import insert, select
+
+from app.database.session import async_session_maker
+from app.database.models import Company, BusinessType
+
 
 # Настройка шаблонов
 templates_dir = Path(__file__).resolve().parent.parent / "templates"
@@ -41,114 +46,57 @@ async def business_registration_page(request: Request):
 
 @router.post("/register")
 async def register_business(
-    request: Request,
     business_name: str = Form(...),
     business_type: str = Form(...),
     address: str = Form(...),
     phone: str = Form(...),
     email: str = Form(...),
-    description: str = Form(...),
-    logo: UploadFile = File(None)
-):
-    """
-    Обработка формы регистрации бизнеса
-    """
-    try:
-        # Генерируем уникальный ID для бизнеса
-        business_id = str(uuid.uuid4())
-        
-        # Путь для сохранения логотипа
-        logo_path = None
-        if logo:
-            # Создаем уникальное имя файла
-            file_extension = os.path.splitext(logo.filename)[1]
-            unique_filename = f"{business_id}{file_extension}"
-            
-            # Путь для сохранения
-            upload_dir = Path(__file__).resolve().parent.parent / "static" / "uploads" / "logos"
-            upload_dir.mkdir(parents=True, exist_ok=True)
-            
-            file_path = upload_dir / unique_filename
-            
-            # Сохраняем файл
-            with open(file_path, "wb") as buffer:
-                content = await logo.read()
-                buffer.write(content)
-            
-            logo_path = f"/static/uploads/logos/{unique_filename}"
-        else:
-            # Используем стандартный логотип, если не загружен
-            logo_path = "/static/images/default-logo.png"
-        
-        # Создаем данные о бизнесе
-        business_data = {
-            "id": business_id,
-            "name": business_name,
-            "type": business_type,
-            "logo": logo_path,
-            "description": description,
-            "highlights": [
-                "Новый бизнес",
-                "Открыт для клиентов"
-            ],
-            "address": address,
-            "working_hours": {
-                "monday": "09:00 - 18:00",
-                "tuesday": "09:00 - 18:00",
-                "wednesday": "09:00 - 18:00",
-                "thursday": "09:00 - 18:00",
-                "friday": "09:00 - 18:00",
-                "saturday": "10:00 - 16:00",
-                "sunday": "Закрыто"
-            },
-            "contacts": {
-                "phone": phone,
-                "email": email,
-                "social": {
-                    "instagram": "",
-                    "facebook": "",
-                    "vk": ""
-                }
-            },
-            "menu": {
-                "categories": []
-            },
-            "gallery": []
-        }
-        
-        # Загружаем текущие данные о бизнесах
-        try:
-            with open(businesses_file, "r", encoding="utf-8") as f:
-                businesses = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            businesses = {}
-        
-        # Добавляем новый бизнес
-        businesses[business_id] = business_data
-        
-        # Сохраняем обновленные данные
-        with open(businesses_file, "w", encoding="utf-8") as f:
-            json.dump(businesses, f, ensure_ascii=False, indent=2)
-        
-        # Возвращаем JSON-ответ с ID бизнеса
-        return JSONResponse(content={
-            "status": "success",
-            "message": "Бизнес успешно зарегистрирован",
-            "business_id": business_id
-        })
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    description: Optional[str] = Form(None),
+    logo: Optional[UploadFile] = File(None)
+):  
+    print(business_type)
+    print(dict(
+        name=business_name,
+        business_type=BusinessType[business_type],
+        address=address,
+        phone=phone,
+        email=email,
+        description=description,
+        logo="logo"
+    ))
+    async with async_session_maker() as session:
+        stmt = insert(Company).values(
+            name=business_name,
+            business_type=BusinessType[business_type],
+            address=address,
+            phone=phone,
+            email=email,
+            description=description,
+            logo="logo"
+        ).returning(Company)
+        result = await session.execute(stmt)
+        await session.commit()
+        result = result.scalar()
+    return {"business_id": result.id}
 
-@router.get("/business/register", response_class=HTMLResponse)
-async def register_business(request: Request):
-    """
-    Страница регистрации нового бизнеса
-    """
-    return templates.TemplateResponse(
-        "business_registration.html",
-        {"request": request}
-    )
+
+
+@router.get("/{business_id}")
+async def get_business(business_id: int):
+    async with async_session_maker() as session:
+        stmt = select(Company).where(Company.id == business_id)
+        res = await session.execute(stmt)
+        res: Company = res.scalar()
+        record = {
+            "businessName": res.name,
+            "businessType": res.business_type,
+            "address": res.address,
+            "contactPhone": res.phone,
+            "email": res.phone,
+            "description": res.description,
+            "logo": res.logo
+        }
+
 
 @router.post("/generate-logo")
 async def generate_logo(request: LogoGenerationRequest):
