@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: kaliningrad-app:latest
+    container_name: kaliningrad-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ..:/app
+      - ../app/static/uploads:/app/app/static/uploads
+    env_file:
+      - ../.env
+    depends_on:
+      - postgres
+      - rabbitmq
+      - redis
+    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:14
+    container_name: kaliningrad-postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=qwertytown
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: kaliningrad-rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  redis:
+    image: redis:6
+    container_name: kaliningrad-redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  redis_data:
+  uploads_data: 

@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# Docker
+.docker
+Dockerfile
+compose.yaml
+.dockerignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Виртуальные окружения
+venv/
+ENV/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Миграции (сохраняем)
+# migrations/versions/
+
+# Данные
+*.db
+*.sqlite3 
