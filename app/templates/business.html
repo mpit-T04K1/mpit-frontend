@@ -423,23 +423,17 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('businessData:', businessData);
         console.log('configData:', configData);
         
-        // Проверяем структуру данных бизнеса, если есть
-        if (businessData) {
-            console.log('businessData.menu:', businessData.menu);
-            if (businessData.menu) {
-                console.log('businessData.menu.categories:', businessData.menu.categories);
-            }
-        }
+        // Добавляем заголовок и описание меню
+        let menuHeader = `
+            <div class="text-center mb-4">
+                <h3 class="text-light">Наше меню</h3>
+                <p class="text-light-50 opacity-75">Насладитесь нашими фирменными блюдами, приготовленными из свежих ингредиентов</p>
+            </div>
+        `;
+        
+        menuDisplay.innerHTML = menuHeader;
         
         // Проверяем структуру данных конфигурации, если есть
-        if (configData) {
-            console.log('configData.menu:', configData.menu);
-            if (configData.menu) {
-                console.log('configData.menu.categories:', configData.menu.categories);
-            }
-        }
-        
-        // Сначала проверяем наличие непустого меню в конфигурации
         if (configData && configData.menu && configData.menu.categories && configData.menu.categories.length > 0) {
             console.log('Отображаем меню из configData');
             displayMenu(configData.menu.categories);
@@ -452,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Если меню нет или оно пустое в обоих местах
         else {
             console.log('Меню не найдено или пусто в обоих источниках');
-            menuDisplay.innerHTML = `
+            menuDisplay.innerHTML += `
                 <div class="text-center text-light mt-5">
                     <i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i>
                     <h4 class="mt-3">Меню не найдено</h4>
@@ -468,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!menuDisplay) return;
         
         if (!categories || categories.length === 0) {
-            menuDisplay.innerHTML = `
+            menuDisplay.innerHTML += `
                 <div class="text-center text-light mt-5">
                     <i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i>
                     <h4 class="mt-3">Меню пусто</h4>
@@ -478,25 +472,46 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Создаем категории меню в боковой панели
+        createMenuCategories(categories);
+        
+        // Добавляем HTML для категорий и их блюд
         let html = '';
         
         categories.forEach(category => {
             html += `
-                <div class="menu-category mt-5 mb-4">
-                    <h4 class="text-light text-center mb-4">${category.name}</h4>
+                <div class="menu-category mt-5 mb-4" id="category-${category.id}">
+                    <h4 class="text-light text-center mb-4" style="position: relative; padding-bottom: 10px;">
+                        ${category.name}
+                        <span style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, #47c1e8, #e42bd4);"></span>
+                    </h4>
                     <div class="row g-4">
             `;
             
             if (category.items && category.items.length > 0) {
                 category.items.forEach(item => {
+                    // Создаем путь к заглушке изображения, если нет своего
+                    const imagePath = item.image || '/static/images/placeholder-food.png';
+                    
                     html += `
-                        <div class="col-md-6">
-                            <div class="menu-item-card p-3" style="background-color: rgba(30, 30, 30, 0.5); border-radius: 15px; height: 100%;">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="text-light mb-0">${item.name}</h5>
-                                    <span class="badge" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white;">${item.price} ₽</span>
+                        <div class="col-md-6 mb-4">
+                            <div class="menu-item-card" style="position: relative; height: 200px; overflow: hidden; border-radius: 15px; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);">
+                                <div class="image-background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('${imagePath}'); background-size: cover; background-position: center; filter: blur(3px) brightness(0.6); opacity: 0.7; transform: scale(1.1);"></div>
+                                <div class="image-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));"></div>
+                                <div class="menu-item-content" style="position: relative; z-index: 2; padding: 20px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="text-light mb-0">${item.name}</h5>
+                                            <span class="badge" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; font-size: 1rem; padding: 5px 15px;">${item.price} ₽</span>
+                                        </div>
+                                        <p class="text-light-50 mb-0" style="font-size: 0.9rem; line-height: 1.4;">${item.description || 'Без описания'}</p>
+                                    </div>
+                                    <div class="mt-3 text-end">
+                                        <button class="btn btn-sm" style="background: rgba(71, 193, 232, 0.2); color: white; border: 1px solid rgba(71, 193, 232, 0.5); backdrop-filter: blur(5px);">
+                                            <i class="bi bi-cart-plus me-1"></i> Заказать
+                                        </button>
+                                    </div>
                                 </div>
-                                <p class="text-light-50 mb-0">${item.description || 'Без описания'}</p>
                             </div>
                         </div>
                     `;
@@ -515,7 +530,61 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
         
-        menuDisplay.innerHTML = html;
+        menuDisplay.innerHTML += html;
+    }
+    
+    // Функция для создания категорий меню в боковой панели
+    function createMenuCategories(categories) {
+        const menuCategoriesContainer = document.getElementById('menu-categories');
+        if (!menuCategoriesContainer) return;
+        
+        menuCategoriesContainer.innerHTML = '<h5 class="text-light mb-3 text-center">Категории</h5>';
+        
+        // Добавляем каждую категорию в боковую панель
+        categories.forEach((category, index) => {
+            const bgColors = [
+                'rgba(71, 193, 232, 0.15)',  // голубой
+                'rgba(228, 43, 212, 0.15)',  // розовый
+                'rgba(94, 92, 230, 0.15)',   // фиолетовый
+                'rgba(255, 153, 0, 0.15)',   // оранжевый
+                'rgba(46, 204, 113, 0.15)'   // зеленый
+            ];
+            
+            const borderColors = [
+                'rgba(71, 193, 232, 0.3)',
+                'rgba(228, 43, 212, 0.3)',
+                'rgba(94, 92, 230, 0.3)',
+                'rgba(255, 153, 0, 0.3)',
+                'rgba(46, 204, 113, 0.3)'
+            ];
+            
+            // Выбираем цвет для категории
+            const colorIndex = index % bgColors.length;
+            const bgColor = bgColors[colorIndex];
+            const borderColor = borderColors[colorIndex];
+            
+            const categoryItem = document.createElement('div');
+            categoryItem.className = 'menu-category mb-3';
+            categoryItem.setAttribute('data-category', category.id);
+            categoryItem.innerHTML = `
+                <div class="category-header nav-item" style="background-color: ${bgColor}; border: 1px solid ${borderColor}; border-radius: 8px; cursor: pointer; padding: 8px 12px; margin-bottom: 5px;">
+                    <i class="bi bi-menu-button text-light"></i>
+                    <span class="text-light">${category.name}</span>
+                </div>
+            `;
+            
+            // Добавляем обработчик события для прокрутки к категории при клике
+            categoryItem.querySelector('.category-header').addEventListener('click', (e) => {
+                const targetCategoryId = category.id;
+                const targetCategory = document.getElementById(`category-${targetCategoryId}`);
+                if (targetCategory) {
+                    // Прокручиваем к категории с плавной анимацией
+                    targetCategory.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+            
+            menuCategoriesContainer.appendChild(categoryItem);
+        });
     }
     
     // Вызываем функцию загрузки меню при загрузке страницы
