@@ -266,68 +266,119 @@ function createMapModal() {
     bsModal.show();
 }
 
-/**
- * Загрузка скрипта Яндекс.Карт
- */
-function loadYandexMapsScript() {
-    return new Promise((resolve, reject) => {
-        // Проверяем, загружен ли уже скрипт
-        if (window.ymaps) {
-            resolve();
-            return;
-        }
-        
-        // Получаем API ключ из страницы
-        const apiKey = document.documentElement.getAttribute('data-yandex-maps-api-key');
-        
-        // Создаем элемент скрипта
-        const script = document.createElement('script');
-        script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
-        script.async = true;
-        
-        // Добавляем обработчики событий
-        script.onload = resolve;
-        script.onerror = reject;
-        
-        // Добавляем скрипт в DOM
-        document.head.appendChild(script);
+let center = [54.70805096669561,20.50560278768957]
+
+function init (){
+    let map = new ymaps.Map('demo-map' , {
+        center: center,
+        zoom: 39,
+        controls:['routePanelControl']
     });
+
+    // let placemark = new ymaps.Placemark(center,{
+    //     balloonContentHeader: 'Хедер',
+    //     balloonContentBody: 'боди',
+    //     balloonContentFooter: 'футер'
+    // },{
+    //     iconLayout:'default#image',
+    //     iconImageHref: "img/free-icon-map-location-7743571.png",
+    //     iconImageSize: [40,40],
+    //     iconImageOffset: [-20,-30]
+    // });
+
+    let placemark1 = new ymaps.Placemark(center,{
+        balloonContent: `
+            <div class=balloon>
+                <div class="adress"> Мы сюда едем</div>
+                <div class="contact">
+                    <a href="">AAAAAA</a>
+                </div>
+            </div>
+        `
+    },{
+        iconLayout:'default#image',
+        iconImageHref: "img/free-icon-map-location-7743571.png",
+        iconImageSize: [40,40],
+        iconImageOffset: [-20,-30]
+    });
+
+    let control = map.controls.get('routePanelControl');
+    // let location = ymaps.geolocation.get();
+
+    // location.then(function(res){
+    //     let locationText = res.geoObjects.get(0).properties.get('text');
+    //     console.log(locationText);
+
+    //     control.routePanel.state.set({
+    //         type: 'auto',
+    //         fromEnabled: true,
+    //         from: locationText,
+    //         toEnabled: true,
+    //         to: center
+    //     });
+    
+    //     control.routePanel.options.set({
+    //         types:{
+    //             masstransit: true,
+    //             pedestrian: true,
+    //             auto: true,
+    //             taxi: true
+    //         }
+    //     });
+    // });
+
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+    };
+      
+    function success(pos) {
+        const crd = pos.coords;
+      
+        console.log(`Latitude : ${crd.latitude}`);
+        console.log(`Longitude: ${crd.longitude}`);
+
+        let reverseGeocoder = ymaps.geocode([crd.latitude, crd.longitude]);
+        let locationText = null;
+
+        reverseGeocoder.then(function(res){
+            locationText = res.geoObjects.get(0).properties.get('text');
+
+            control.routePanel.state.set({
+                type: 'auto',
+                fromEnabled: true,
+                from: locationText,
+                toEnabled: true,
+                to: center
+            });
+        });
+
+
+        control.routePanel.options.set({
+            types:{
+                masstransit: true,
+                pedestrian: true,
+                auto: true,
+                taxi: true
+            }
+        });
+    }
+      
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+      
+    navigator.geolocation.getCurrentPosition(success, error, options);
+
+    
+
+    // map.geoObjects.add(placemark1);
+    placemark1.balloon.open();
 }
 
-/**
- * Инициализация карты Яндекс.Карт
- */
-function initializeYandexMap() {
-    // Ждем, пока API Яндекс.Карт полностью загрузится
-    ymaps.ready(function() {
-        // Создаем карту
-        const map = new ymaps.Map('yandexMap', {
-            center: [55.76, 37.64], // Москва
-            zoom: 10,
-            controls: ['zoomControl', 'searchControl', 'fullscreenControl']
-        });
-        
-        // Создаем менеджер объектов для эффективного отображения большого количества меток
-        const objectManager = new ymaps.ObjectManager({
-            clusterize: true,
-            gridSize: 32,
-            clusterDisableClickZoom: false
-        });
-        
-        // Добавляем менеджер объектов на карту
-        map.geoObjects.add(objectManager);
-        
-        // Загружаем компании для отображения на карте
-        loadCompaniesForMap(objectManager);
-        
-        // Загружаем города и типы бизнеса для фильтров
-        loadCitiesForFilter();
-        loadBusinessTypesForFilter();
-        
-        // Настраиваем обработчики событий для фильтров
-        setupMapFilters(objectManager);
-    });
-}
+ymaps.ready(init);
+
+
 
 /**
  * Загрузка компаний для отображения на карте
@@ -517,3 +568,147 @@ function setupMapFilters(objectManager) {
         });
     }
 } 
+
+
+        /**
+         * Базовый класс для модульного интерфейса
+         */
+        class ModularInterface {
+            constructor() {
+                this.activeSection = null;
+                this.activeInfoSection = null;
+                
+                // Инициализация обработчиков событий
+                this.initNavigation();
+                this.initSubmenuToggle();
+                this.showDefaultSections();
+            }
+            
+            // Инициализация основной навигации
+            initNavigation() {
+                const navItems = document.querySelectorAll('.nav-item:not(.has-submenu)');
+                
+                navItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        // Проверяем, есть ли у элемента атрибут data-target
+                        if (item.dataset.target) {
+                            const targetSection = item.dataset.target;
+                            
+                            // Если есть атрибут data-item, значит это подпункт меню
+                            if (item.dataset.item) {
+                                // Обработка подпунктов меню, если необходимо
+                            } else {
+                                // Переключаем на соответствующую секцию
+                                this.switchToSection(targetSection);
+                                
+                                // Обновляем активный пункт меню
+                                navItems.forEach(nav => nav.classList.remove('active'));
+                                item.classList.add('active');
+                            }
+                        }
+                    });
+                });
+            }
+            
+            // Инициализация переключателей подменю
+            initSubmenuToggle() {
+                const submenuToggles = document.querySelectorAll('.nav-item.has-submenu');
+                
+                submenuToggles.forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        // Переключаем класс expanded
+                        toggle.classList.toggle('expanded');
+                        
+                        // Находим следующий элемент (должен быть submenu)
+                        const submenu = toggle.nextElementSibling;
+                        if (submenu && submenu.classList.contains('submenu')) {
+                            if (submenu.style.display === 'block') {
+                                submenu.style.display = 'none';
+                            } else {
+                                submenu.style.display = 'block';
+                            }
+                        }
+                        
+                        // Если у переключателя есть атрибут data-target, переключаемся на эту секцию
+                        if (toggle.dataset.target) {
+                            this.switchToSection(toggle.dataset.target);
+                        }
+                    });
+                });
+            }
+            
+            // Показываем секции по умолчанию при загрузке страницы
+            showDefaultSections() {
+                // Находим все секции
+                const sections = document.querySelectorAll('.section');
+                const infoSections = document.querySelectorAll('.info-section');
+                
+                // Показываем первую секцию
+                if (sections.length > 0) {
+                    const firstSection = sections[0];
+                    this.activeSection = firstSection.id;
+                    firstSection.style.display = 'block';
+                }
+                
+                // Показываем первую информационную секцию
+                if (infoSections.length > 0) {
+                    const firstInfoSection = infoSections[0];
+                    this.activeInfoSection = firstInfoSection.id;
+                    firstInfoSection.style.display = 'block';
+                }
+                
+                // Устанавливаем активный пункт меню
+                const firstNavItem = document.querySelector('.nav-item:not(.has-submenu)');
+                if (firstNavItem) {
+                    firstNavItem.classList.add('active');
+                }
+            }
+            
+            // Переключение на выбранную секцию
+            switchToSection(sectionId) {
+                // Скрываем все секции
+                const sections = document.querySelectorAll('.section');
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Показываем выбранную секцию
+                const targetSection = document.getElementById(`${sectionId}-section`);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                    this.activeSection = `${sectionId}-section`;
+                    
+                    // Вызываем метод для обработки смены секции
+                    this.onSectionChange(sectionId);
+                }
+                
+                // Скрываем все информационные секции
+                const infoSections = document.querySelectorAll('.info-section');
+                infoSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Показываем соответствующую информационную секцию
+                const targetInfoSection = document.getElementById(`${sectionId}-info`);
+                if (targetInfoSection) {
+                    targetInfoSection.style.display = 'block';
+                    this.activeInfoSection = `${sectionId}-info`;
+                }
+            }
+            
+            // Метод для обработки смены секции
+            onSectionChange(sectionId) {
+                console.log(`Переключение на секцию: ${sectionId}`);
+                
+                // Показываем/скрываем категории меню
+                const menuCategories = document.getElementById('menu-categories');
+                if (menuCategories) {
+                    menuCategories.style.display = sectionId === 'menu' ? 'block' : 'none';
+                }
+            }
+        }
+        
+        // Инициализация модульного интерфейса при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            window.modularInterface = new ModularInterface();
+        });
