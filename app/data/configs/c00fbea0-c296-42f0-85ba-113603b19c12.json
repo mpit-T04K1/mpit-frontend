@@ -4,11 +4,12 @@
     "business-info": true,
     "menu": true,
     "map": true,
-    "contacts": false,
+    "contacts": true,
     "gallery": false
   },
   "order": null,
   "menu": {
+    "menu_title": "ДЖИНСЫ",
     "categories": [
       {
         "id": "id_kdrwnynya",

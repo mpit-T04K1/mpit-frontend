@@ -81,7 +81,7 @@
                                 <button type="submit" class="btn btn-neon" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 500;">
                                     <i class="bi bi-save me-2"></i> Сохранить конфигурацию
                                 </button>
-                                <a href="/test" class="btn btn-outline-light" style="border-radius: 30px; font-weight: 500;">
+                                <a href="/business/view/{{ business.id }}" class="btn btn-outline-light" style="border-radius: 30px; font-weight: 500;">
                                     <i class="bi bi-eye me-2"></i> Просмотреть страницу бизнеса
                                 </a>
                             </div>
@@ -196,7 +196,7 @@
         <i class="bi bi-tools text-light"></i>
         <span class="text-light">Настройка</span>
     </div>
-    <a href="/test" class="nav-item" style="text-decoration: none;" id="preview-sidebar-link">
+    <a href="/business/view/{{ business.id }}" class="nav-item" style="text-decoration: none;" id="preview-sidebar-link">
         <i class="bi bi-eye text-light"></i>
         <span class="text-light">Просмотр</span>
     </a>
@@ -238,20 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Предотвращение двойных кликов на ссылках просмотра
     let isNavigating = false;
     
-    // Удаляем все существующие обработчики событий у ссылок (на случай, если обработчики добавляются дважды)
-    document.querySelectorAll('a[href="/test"]').forEach(el => {
-        let clonedEl = el.cloneNode(true);
-        el.parentNode.replaceChild(clonedEl, el);
-    });
-    
-    // Обработчик для всех ссылок с адресом /test
-    const previewButtons = document.querySelectorAll('a[href="/test"]');
-    console.log('Найдено кнопок предпросмотра:', previewButtons.length);
+    // Обработчик для всех ссылок с адресом к просмотру бизнеса
+    const previewUrl = '/business/view/' + (businessData ? businessData.id : '');
     
     // Добавляем единый обработчик для всех кнопок превью через делегирование событий
     document.body.addEventListener('click', function(e) {
-        // Ищем ближайший элемент с href="/test"
-        const previewBtn = e.target.closest('a[href="/test"]');
+        // Ищем ближайший элемент с ссылкой на страницу просмотра бизнеса
+        const previewBtn = e.target.closest('a[href^="/business/view/"]');
         
         if (previewBtn) {
             // Останавливаем всплытие события, чтобы предотвратить повторную обработку
@@ -278,8 +271,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Выполняем переход с задержкой
             setTimeout(() => {
-                console.log('Переход на страницу /test');
-                window.location.href = '/test';
+                console.log('Переход на страницу просмотра бизнеса');
+                window.location.href = previewBtn.getAttribute('href');
             }, 100);
         }
     });

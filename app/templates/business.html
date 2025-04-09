@@ -57,10 +57,12 @@
 <div id="map-section" class="section" style="display: none; padding-top: 20px; height: 100%; overflow-y: auto; background-color: #121212;">
     <h2 class="panel-title text-center text-light">Где нас найти</h2>
     <div class="main-content d-flex flex-column align-items-center justify-content-center" style="min-height: calc(100% - 60px);">
-        <div id="demo-map" style="width: 100%; height: 400px; border-radius: 15px; overflow: hidden;"></div>
+        <!-- Скрытое поле с адресом для JavaScript -->
+        <input type="hidden" id="business-address" value="{{ business.address if business else 'Калининград, ул. Ленинского комсомола 3' }}">
+        <div id="map" style="width: 100%; height: 400px; border-radius: 15px; overflow: hidden;"></div>
         <div class="address-info text-center mt-4">
             <h4 class="text-light">Наш адрес</h4>
-            <p class="text-light-50">{{ business.address if business else 'Адрес заведения' }}</p>
+            <p class="text-light-50 business-address-text">{{ business.address if business else 'Адрес заведения' }}</p>
             <h5 class="text-light mt-3">Часы работы</h5>
             <div class="working-hours mt-2">
                 {% if business and business.working_hours %}
@@ -244,84 +246,107 @@
 {% endblock %}
 
 {% block info_panel %}
-<div id="welcome-info" class="info-section text-center" style="background-color: #1a1a1a;">
-    <h4 class="text-light text-center mb-4">О нас</h4>
-    <div class="d-flex align-items-center justify-content-center" style="height: calc(100% - 50px);">
-        <p class="text-light-50 opacity-75 text-center">
-            {{ business.description if business else 'Описание заведения' }}
-        </p>
-    </div>
-</div>
-
-<div id="menu-info" class="info-section text-center" style="display: none; background-color: #1a1a1a;">
-    <h4 class="text-light text-center mb-4">О {{ business.menu.menu_title if business and business.menu and business.menu.menu_title else (config.menu.menu_title if config and config.menu and config.menu.menu_title else 'нашем меню') }}</h4>
-    <div class="d-flex align-items-center justify-content-center" style="height: calc(100% - 50px);">
-        <p class="text-light-50 opacity-75 text-center">
-            Наше меню состоит из тщательно подобранных блюд, приготовленных из свежих ингредиентов. 
-            Мы обновляем наше меню каждый сезон, чтобы предложить вам самые свежие и вкусные блюда.
-            У нас есть опции для вегетарианцев и веганов, а также блюда, не содержащие глютен.
-        </p>
-    </div>
-</div>
-
-<div id="map-info" class="info-section text-center" style="display: none; background-color: #1a1a1a;">
-    <h4 class="text-light text-center mb-4">Как нас найти</h4>
-    <div class="d-flex align-items-center justify-content-center" style="height: calc(100% - 50px);">
-        <div class="row w-100">
-            <div class="col-md-6 d-flex flex-column justify-content-center">
-                <h5 class="text-light text-center">Адрес</h5>
-                <p class="text-light-50 opacity-75 text-center">
-                    {{ business.address if business else 'Наш адрес' }}
-                </p>
-            </div>
-            <div class="col-md-6 d-flex flex-column justify-content-center">
-                <h5 class="text-light text-center">Транспорт</h5>
-                <p class="text-light-50 opacity-75 text-center">
-                    Автобусы: 10, 24, 33<br>
-                    Ближайшее метро: Площадь Победы
-                </p>
+{% if not error %}
+<!-- About Us Section -->
+<div class="info-section active" id="welcome-info">
+    <div class="content-card">
+        <h3 class="panel-title text-center text-light">О нас</h3>
+        <div class="content">
+            <p class="text-light">{{ business.description }}</p>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="/business/view/{{ business.id }}/constructor" class="btn me-2" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-tools me-2"></i> Конструктор интерфейса
+                </a>
+                <a href="https://qwerty.love-domain.ru/admin" target="_blank" class="btn" style="background: linear-gradient(90deg, #e42bd4, #47c1e8); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-graph-up me-2"></i> Аналитика
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<div id="contacts-info" class="info-section text-center" style="display: none; background-color: #1a1a1a;">
-    <h4 class="text-light text-center mb-4">Наши контакты</h4>
-    <div class="d-flex align-items-center justify-content-center" style="height: calc(100% - 50px);">
-        <div class="row w-100">
-            <div class="col-md-6 d-flex flex-column justify-content-center">
-                <h5 class="text-light text-center">Свяжитесь с нами</h5>
-                <p class="text-light-50 opacity-75 text-center">
-                    Телефон: {{ business.contacts.phone if business and business.contacts else 'Наш телефон' }}<br>
-                    Email: {{ business.contacts.email if business and business.contacts else 'Наш email' }}
-                </p>
-                <p class="text-light-50 opacity-75 text-center">
-                    <i class="bi bi-instagram me-2"></i> Instagram
-                </p>
-                <p class="text-light-50 opacity-75 text-center">
-                    <i class="bi bi-facebook me-2"></i> Facebook
-                </p>
-            </div>
-            <div class="col-md-6 d-flex flex-column justify-content-center">
-                <h5 class="text-light text-center">Корпоративные мероприятия</h5>
-                <p class="text-light-50 opacity-75 text-center">
-                    Для организации корпоративных мероприятий свяжитесь с нашим менеджером по телефону: 
-                    <strong class="text-light">{{ business.phone if business else 'Наш телефон' }}</strong>
-                </p>
+<!-- Menu Info Section -->
+<div class="info-section" id="menu-info">
+    <div class="content-card">
+        <h3 class="panel-title text-center text-light">{{ business.menu.menu_title|default("Наше меню") }}</h3>
+        <div class="content">
+            <p class="text-light">В этом разделе вы можете настроить своё меню. Добавляйте категории и блюда, чтобы ваши клиенты всегда были в курсе вашего ассортимента.</p>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="/business/view/{{ business.id }}/constructor" class="btn me-2" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-tools me-2"></i> Конструктор интерфейса
+                </a>
+                <a href="https://qwerty.love-domain.ru/admin" target="_blank" class="btn" style="background: linear-gradient(90deg, #e42bd4, #47c1e8); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-graph-up me-2"></i> Аналитика
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<div id="gallery-info" class="info-section text-center" style="display: none; background-color: #1a1a1a;">
-    <h4 class="text-light text-center mb-4">О галерее</h4>
-    <div class="d-flex align-items-center justify-content-center" style="height: calc(100% - 50px);">
-        <p class="text-light-50 opacity-75 text-center">
-            Здесь представлены фотографии интерьера, наших блюд и проводимых мероприятий. 
-            Все фотографии сделаны профессиональными фотографами и отражают реальную атмосферу заведения.
-        </p>
+<!-- Map Info Section -->
+<div class="info-section" id="map-info">
+    <div class="content-card">
+        <h3 class="panel-title text-center text-light">Где мы находимся</h3>
+        <div class="content">
+            <p class="text-light">Адрес: {{ business.address }}</p>
+            <p class="text-light">Постройте маршрут до нас или просто посмотрите наше местоположение на карте.</p>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="/business/view/{{ business.id }}/constructor" class="btn me-2" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-tools me-2"></i> Конструктор интерфейса
+                </a>
+                <a href="https://qwerty.love-domain.ru/admin" target="_blank" class="btn" style="background: linear-gradient(90deg, #e42bd4, #47c1e8); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-graph-up me-2"></i> Аналитика
+                </a>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Contacts Info Section -->
+<div class="info-section" id="contacts-info">
+    <div class="content-card">
+        <h3 class="panel-title text-center text-light">Наши контакты</h3>
+        <div class="content">
+            <div class="contact-item mb-2">
+                <i class="bi bi-telephone text-light me-2"></i>
+                <span class="text-light">{{ business.contacts.phone }}</span>
+            </div>
+            <div class="contact-item mb-2">
+                <i class="bi bi-envelope text-light me-2"></i>
+                <span class="text-light">{{ business.contacts.email }}</span>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="/business/view/{{ business.id }}/constructor" class="btn me-2" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-tools me-2"></i> Конструктор интерфейса
+                </a>
+                <a href="https://qwerty.love-domain.ru/admin" target="_blank" class="btn" style="background: linear-gradient(90deg, #e42bd4, #47c1e8); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-graph-up me-2"></i> Аналитика
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Info Section -->
+<div class="info-section" id="gallery-info">
+    <div class="content-card">
+        <h3 class="panel-title text-center text-light">Галерея</h3>
+        <div class="content">
+            <p class="text-light">Добавьте фотографии вашего заведения, блюд или продукции, чтобы привлечь клиентов.</p>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="/business/view/{{ business.id }}/constructor" class="btn me-2" style="background: linear-gradient(90deg, #47c1e8, #e42bd4); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-tools me-2"></i> Конструктор интерфейса
+                </a>
+                <a href="https://qwerty.love-domain.ru/admin" target="_blank" class="btn" style="background: linear-gradient(90deg, #e42bd4, #47c1e8); color: white; border: none; padding: 8px 15px; border-radius: 30px; font-weight: 500;">
+                    <i class="bi bi-graph-up me-2"></i> Аналитика
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- ... existing code ... -->
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -335,6 +360,15 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Конфигурация:', { config: configData, business: businessData });
     console.log('Проверка наличия меню в config:', configData?.menu);
     console.log('Проверка наличия меню в business:', businessData?.menu);
+    
+    // Явная инициализация адреса бизнеса
+    if (businessData && businessData.address) {
+        const addressInput = document.getElementById('business-address');
+        if (addressInput) {
+            console.log('Устанавливаем адрес бизнеса в скрытое поле:', businessData.address);
+            addressInput.value = businessData.address;
+        }
+    }
 
     const sections = document.querySelectorAll('.section');
     const navItems = document.querySelectorAll('.nav-item[data-target]');
@@ -386,33 +420,99 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Инициализируем Яндекс.Карты, если необходимо показать карту
-    if (businessData && configData && configData.panels && configData.panels['map']) {
-        if (document.getElementById('demo-map')) {
-            try {
-                ymaps.ready(function() {
-                    var businessAddress = businessData.address;
-                    var myMap = new ymaps.Map('demo-map', {
-                        center: [54.7107, 20.5106], // Координаты центра Калининграда
-                        zoom: 13,
-                        controls: ['zoomControl', 'fullscreenControl']
+    if (businessData && document.getElementById('map')) {
+        try {
+            // САМАЯ ПРОСТАЯ и НАДЕЖНАЯ инициализация карты
+            ymaps.ready(function() {
+                console.log('Яндекс карты готовы, инициализируем карту');
+                console.log('Адрес бизнеса:', businessData.address);
+                
+                // Создаем карту с базовыми настройками
+                var myMap = new ymaps.Map('map', {
+                    center: [54.7107, 20.5106], // Калининград центр
+                    zoom: 12,
+                    controls: ['zoomControl', 'routePanelControl']
+                });
+                
+                // Получаем контрол маршрута
+                var routeControl = myMap.controls.get('routePanelControl');
+                
+                // Устанавливаем пункт назначения (адрес бизнеса)
+                var businessAddress = businessData.address || "Калининград, Ленинский проспект 30";
+                
+                // Упрощенная настройка панели маршрута
+                routeControl.routePanel.state.set({
+                    type: 'auto',
+                    fromEnabled: true,
+                    from: 'Ростех Арена',  // Будет запрошена геолокация пользователя
+                    toEnabled: true,
+                    to: businessAddress
+                });
+                
+                // Добавляем поддержку всех типов маршрутов
+                routeControl.routePanel.options.set({
+                    types: {
+                        auto: true,
+                        masstransit: true,
+                        pedestrian: true,
+                        taxi: true
+                    }
+                });
+                
+                // Создаем метку для бизнеса
+                ymaps.geocode(businessAddress).then(function(res) {
+                    var firstGeoObject = res.geoObjects.get(0);
+                    var coords = firstGeoObject.geometry.getCoordinates();
+                    
+                    // Перемещаем карту к бизнесу
+                    myMap.setCenter(coords, 15);
+                    
+                    // Добавляем метку
+                    var placemark = new ymaps.Placemark(coords, {
+                        hintContent: businessData.name,
+                        balloonContent: '<b>' + businessData.name + '</b><br>' + businessAddress
+                    }, {
+                        preset: 'islands#dotIcon',
+                        iconColor: '#1e98ff'
                     });
                     
-                    var myGeocoder = ymaps.geocode(businessAddress);
-                    myGeocoder.then(function(res) {
-                        var coords = res.geoObjects.get(0).geometry.getCoordinates();
-                        myMap.setCenter(coords, 16);
-                        var placemark = new ymaps.Placemark(coords, {
-                            hintContent: businessData.name,
-                            balloonContent: businessData.name + "<br>" + businessData.address
+                    myMap.geoObjects.add(placemark);
+                    placemark.balloon.open();
+                    
+                    // Используем геолокацию для автоматической установки начальной точки
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var userCoords = [position.coords.latitude, position.coords.longitude];
+                            
+                            // Определяем адрес пользователя по координатам
+                            ymaps.geocode(userCoords).then(function(res) {
+                                var userAddress = res.geoObjects.get(0).properties.get('text');
+                                
+                                // Устанавливаем начальную точку маршрута
+                                routeControl.routePanel.state.set({
+                                    from: userAddress
+                                });
+                            });
+                        }, function(error) {
+                            console.warn('Ошибка геолокации:', error.message);
+                            // Если геолокация не удалась, устанавливаем точку в центре города
+                            routeControl.routePanel.state.set({
+                                from: "Калининград, площадь Победы"
+                            });
                         });
-                        myMap.geoObjects.add(placemark);
-                    }, function(err) {
-                        console.error('Ошибка геокодирования:', err);
-                    });
+                    } else {
+                        console.warn('Браузер не поддерживает геолокацию');
+                        routeControl.routePanel.state.set({
+                            from: "Калининград, площадь Победы"
+                        });
+                    }
+                }).catch(function(error) {
+                    console.error('Ошибка геокодирования:', error);
+                    alert('Не удалось определить координаты адреса. Пожалуйста, введите адрес вручную в панели маршрута.');
                 });
-            } catch (e) {
-                console.error('Ошибка инициализации карты:', e);
-            }
+            });
+        } catch (e) {
+            console.error('Ошибка инициализации карты:', e);
         }
     }
     

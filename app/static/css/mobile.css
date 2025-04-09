@@ -86,9 +86,26 @@
         grid-row: 2;
         grid-column: 1;
         height: auto;
-        max-height: 180px;
+        max-height: 220px; /* Увеличиваем высоту для лучшей видимости контента */
         background-color: #121212;
         border-top: 1px solid rgba(71, 193, 232, 0.2);
+        overflow-y: auto; /* Добавляем прокрутку если содержимое не помещается */
+    }
+
+    /* Улучшение видимости кнопок в информационной панели */
+    .info-panel .btn {
+        margin: 5px 2px;
+        padding: 5px 10px;
+        display: inline-block;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    
+    /* Улучшение контейнера с кнопками для переходов */
+    .info-panel .d-flex {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     /* Зоны свайпов для удобства использования */
@@ -172,13 +189,19 @@
 
 @media (max-width: 767px) {
     .info-panel {
-        max-height: 150px;
+        max-height: 180px; /* Увеличиваем высоту для среднего размера экрана */
+    }
+    
+    /* Уменьшаем размер кнопок для среднего экрана */
+    .info-panel .btn {
+        font-size: 0.85rem;
+        padding: 4px 8px;
     }
 }
 
 @media (max-width: 576px) {
     .info-panel {
-        max-height: 130px;
+        max-height: 160px; /* Увеличиваем высоту для маленького размера экрана */
     }
     
     .main-toggle {
@@ -187,5 +210,17 @@
         width: 35px;
         height: 35px;
         font-size: 1.2rem;
+    }
+    
+    /* Адаптация кнопок для очень маленьких экранов */
+    .info-panel .btn {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+        margin: 3px 1px;
+    }
+    
+    /* Делаем иконки в кнопках меньше на маленьких экранах */
+    .info-panel .btn i {
+        font-size: 0.9rem;
     }
 } 

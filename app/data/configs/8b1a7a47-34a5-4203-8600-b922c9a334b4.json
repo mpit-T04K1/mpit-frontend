@@ -1,0 +1,48 @@
+{
+  "business_id": "8b1a7a47-34a5-4203-8600-b922c9a334b4",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": false,
+    "gallery": true
+  },
+  "order": null,
+  "menu": {
+    "categories": [
+      {
+        "id": "id_7o2qnset3",
+        "name": "Синие джинсы",
+        "items": [
+          {
+            "id": "id_ztkhecftx",
+            "name": "Хлопковые",
+            "price": 10000.0,
+            "description": "Хорошие",
+            "image": null
+          },
+          {
+            "id": "id_4lh89ldvo",
+            "name": "пррор",
+            "price": 3245.0,
+            "description": "апро",
+            "image": null
+          }
+        ]
+      },
+      {
+        "id": "id_cpkwd12l8",
+        "name": "апро",
+        "items": [
+          {
+            "id": "id_8lp8r6qey",
+            "name": "сапрол",
+            "price": 34567.0,
+            "description": "апро",
+            "image": null
+          }
+        ]
+      }
+    ]
+  }
+}

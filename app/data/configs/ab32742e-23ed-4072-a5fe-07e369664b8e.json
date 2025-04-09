@@ -1,0 +1,15 @@
+{
+  "business_id": "ab32742e-23ed-4072-a5fe-07e369664b8e",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": true,
+    "gallery": true
+  },
+  "order": null,
+  "menu": {
+    "menu_title": "Наше меню",
+    "categories": []
+  }
+}
