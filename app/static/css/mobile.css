@@ -62,6 +62,18 @@
         -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
     }
     
+    /* Overlay для взаимодействия с панелью */
+    .main-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+    
     /* Кнопка для открытия основной панели */
     .main-toggle {
         position: fixed;
@@ -109,21 +121,11 @@
     }
     
     /* Зоны свайпов для удобства использования */
-    .swipe-area-right {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 20px;
-        height: 100%;
-        z-index: 998;
-        display: none;
-    }
-    
     .swipe-area-left {
         position: fixed;
         top: 0;
         left: 0;
-        width: 20px;
+        width: 100%; /* Занимает всю ширину экрана */
         height: 100%;
         z-index: 998;
     }
@@ -185,6 +187,57 @@
         font-weight: 600;
         margin-bottom: 20px;
     }
+    
+    /* Улучшения для конструктора и форм в мобильном виде */
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .col-md-6, .col-md-8, .col-md-12 {
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-bottom: 20px;
+    }
+    
+    /* Улучшение форм для мобильных устройств */
+    form input, form select, form textarea {
+        font-size: 16px !important; /* Предотвращает масштабирование в iOS */
+        padding: 10px 12px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    /* Улучшение конструктора в мобильной версии */
+    #menu_categories_container .card {
+        margin-bottom: 15px;
+    }
+    
+    /* Улучшение для фиксированной кнопки */
+    .fixed-action-button {
+        position: fixed;
+        bottom: 220px; /* Выше info-panel */
+        right: 15px;
+        z-index: 100;
+    }
+    
+    /* Стили для навигации в конструкторе */
+    .preview-container {
+        padding: 10px !important;
+    }
+    
+    /* Улучшения для формы регистрации бизнеса */
+    .registration-form .d-flex {
+        flex-direction: column;
+    }
+    
+    .registration-form .d-flex button {
+        margin-top: 10px;
+        align-self: center;
+    }
+    
+    .registration-form input[type="file"] {
+        font-size: 14px !important;
+    }
 }
 
 @media (max-width: 767px) {
@@ -196,6 +249,26 @@
     .info-panel .btn {
         font-size: 0.85rem;
         padding: 4px 8px;
+    }
+    
+    /* Корректировки для строк в форме */
+    .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+    
+    .col-md-6, .col-md-8, .col-md-12 {
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 15px;
+    }
+    
+    /* Улучшения для отображения таблиц */
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -222,5 +295,34 @@
     /* Делаем иконки в кнопках меньше на маленьких экранах */
     .info-panel .btn i {
         font-size: 0.9rem;
+    }
+    
+    /* Улучшение отображения заголовков */
+    h1, h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    h3, h4 {
+        font-size: 1.2rem !important;
+    }
+    
+    /* Улучшение для конструктора на маленьких экранах */
+    .card-header {
+        padding: 10px !important;
+    }
+    
+    .card-body {
+        padding: 12px !important;
+    }
+    
+    /* Улучшение для кнопок в формах */
+    form .btn, form button {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    /* Улучшение для полей ввода в форме регистрации */
+    .registration-form .form-group {
+        margin-bottom: 12px;
     }
 } 

@@ -37,16 +37,31 @@ function initMobileInterface() {
     toggleButton.innerHTML = '<i class="bi bi-view-list"></i>';
     document.body.appendChild(toggleButton);
     
-    // Создаем области для свайпов
+    // Создаем overlay для взаимодействия с основной панелью
+    const overlay = document.createElement('div');
+    overlay.className = 'main-overlay';
+    overlay.style.display = 'none';
+    document.body.appendChild(overlay);
+    
+    // Создаем области для свайпов (активна вся ширина экрана)
     const swipeAreaLeft = document.createElement('div');
     swipeAreaLeft.className = 'swipe-area-left';
     document.body.appendChild(swipeAreaLeft);
     
     // Добавляем обработчики событий
     toggleButton.addEventListener('click', toggleMainPanel);
+    overlay.addEventListener('click', closeMainPanel);
     
     // Добавляем обработку свайпов для открытия/закрытия панели
     initSwipeDetection();
+    
+    // Находим все формы и добавляем для них блокировку свайпов
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+        });
+    });
     
     console.log('Мобильный интерфейс инициализирован');
 }
@@ -58,6 +73,7 @@ function resetMobileInterface() {
     // Удаляем кнопку и области свайпов
     const toggleButton = document.querySelector('.main-toggle');
     const swipeAreaLeft = document.querySelector('.swipe-area-left');
+    const overlay = document.querySelector('.main-overlay');
     
     if (toggleButton) {
         toggleButton.remove();
@@ -65,6 +81,10 @@ function resetMobileInterface() {
     
     if (swipeAreaLeft) {
         swipeAreaLeft.remove();
+    }
+    
+    if (overlay) {
+        overlay.remove();
     }
     
     // Сбрасываем классы основной панели
@@ -80,13 +100,17 @@ function resetMobileInterface() {
 function toggleMainPanel() {
     console.log('Переключение основной панели');
     const mainPanel = document.querySelector('.main-panel');
+    const overlay = document.querySelector('.main-overlay');
     
     if (mainPanel) {
         mainPanel.classList.toggle('active');
         
-        // Добавляем запись в историю при открытии панели
+        // Показываем/скрываем оверлей
         if (mainPanel.classList.contains('active')) {
+            if (overlay) overlay.style.display = 'block';
             history.pushState({ mobilePanel: 'open' }, null, window.location.pathname);
+        } else {
+            if (overlay) overlay.style.display = 'none';
         }
     }
 }
@@ -97,9 +121,11 @@ function toggleMainPanel() {
 function closeMainPanel() {
     console.log('Закрытие основной панели');
     const mainPanel = document.querySelector('.main-panel');
+    const overlay = document.querySelector('.main-overlay');
     
     if (mainPanel) {
         mainPanel.classList.remove('active');
+        if (overlay) overlay.style.display = 'none';
     }
 }
 
@@ -116,6 +142,25 @@ function initSwipeDetection() {
     let touchEndY = 0;
     let isSwiping = false;
     
+    // Проверяем, находимся ли мы внутри формы или элемента ввода
+    function isFormElement(element) {
+        if (!element) return false;
+        
+        // Проверяем тип элемента или его родителей
+        const formElements = ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'];
+        if (formElements.includes(element.tagName)) return true;
+        
+        // Проверяем родителей до 3 уровня вверх
+        let parent = element.parentElement;
+        for (let i = 0; i < 3; i++) {
+            if (!parent) break;
+            if (parent.tagName === 'FORM') return true;
+            parent = parent.parentElement;
+        }
+        
+        return false;
+    }
+    
     // Вспомогательная функция для определения, является ли событие свайпом
     function isSwipe(startX, endX, startY, endY) {
         // Горизонтальное расстояние свайпа
@@ -131,10 +176,12 @@ function initSwipeDetection() {
     function handleLeftToRightSwipe() {
         console.log('Свайп слева направо - открытие панели');
         const mainPanel = document.querySelector('.main-panel');
+        const overlay = document.querySelector('.main-overlay');
         
         if (mainPanel && !mainPanel.classList.contains('active')) {
             // Добавляем классы для открытия панели
             mainPanel.classList.add('active');
+            if (overlay) overlay.style.display = 'block';
             
             // Добавляем запись в историю
             history.pushState({ mobilePanel: 'open' }, null, window.location.pathname);
@@ -145,40 +192,22 @@ function initSwipeDetection() {
     function handleRightToLeftSwipe() {
         console.log('Свайп справа налево - закрытие панели');
         const mainPanel = document.querySelector('.main-panel');
+        const overlay = document.querySelector('.main-overlay');
         
         if (mainPanel && mainPanel.classList.contains('active')) {
             // Удаляем классы для закрытия панели
             mainPanel.classList.remove('active');
+            if (overlay) overlay.style.display = 'none';
         }
-    }
-    
-    // Отдельная обработка событий для области свайпа слева
-    const swipeAreaLeft = document.querySelector('.swipe-area-left');
-    if (swipeAreaLeft) {
-        swipeAreaLeft.addEventListener('touchstart', function(e) {
-            // Запоминаем начальные координаты
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            isSwiping = false;
-        }, { passive: true });
-        
-        swipeAreaLeft.addEventListener('touchmove', function(e) {
-            // Если уже свайпим, пропускаем
-            if (isSwiping) return;
-            
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
-            
-            // Если движение вправо, открываем панель
-            if (currentX - touchStartX > 30) {
-                isSwiping = true;
-                handleLeftToRightSwipe();
-            }
-        }, { passive: true });
     }
     
     // Обработка начала касания для всего документа
     document.addEventListener('touchstart', function(e) {
+        // Если мы работаем с формой или полем ввода, не обрабатываем свайп
+        if (isFormElement(e.target)) {
+            return;
+        }
+        
         // Запоминаем начальные координаты
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
@@ -187,6 +216,11 @@ function initSwipeDetection() {
     
     // Отслеживаем движение пальца для всего документа
     document.addEventListener('touchmove', function(e) {
+        // Если мы работаем с формой или полем ввода, не обрабатываем свайп
+        if (isFormElement(e.target)) {
+            return;
+        }
+        
         // Если уже свайпим, пропускаем
         if (isSwiping) return;
         
@@ -205,8 +239,11 @@ function initSwipeDetection() {
                     handleRightToLeftSwipe();
                 }
             } else {
-                // Если панель не открыта и это свайп из крайней левой области экрана
-                if (touchStartX < 50) {
+                // Для открытия панели теперь разрешаем свайп от любого места экрана
+                // Но всё равно проверяем некоторые условия для лучшего UX
+                
+                // Если панель не открыта и это начало свайпа в левой трети экрана
+                if (touchStartX < window.innerWidth / 3) {
                     handleLeftToRightSwipe();
                 }
             }

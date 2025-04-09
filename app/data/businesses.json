@@ -968,5 +968,39 @@
       "categories": []
     },
     "gallery": []
+  },
+  "25c5b71d-b65c-4b69-b463-6150c6d7ca43": {
+    "id": "25c5b71d-b65c-4b69-b463-6150c6d7ca43",
+    "name": "Тестов",
+    "type": "bar",
+    "logo": "/static/uploads/logos/25c5b71d-b65c-4b69-b463-6150c6d7ca43.png",
+    "description": "апрол",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "митьб",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "it@eazyan.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
   }
 }
