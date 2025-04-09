@@ -40,7 +40,7 @@
 
 <!-- Секция меню -->
 <div id="menu-section" class="section" style="display: none; padding-top: 20px; height: 100%; overflow-y: auto; background-color: #121212;">
-    <h2 class="panel-title text-center text-light">Меню</h2>
+    <h2 class="panel-title text-center text-light">{{ business.menu.menu_title if business and business.menu and business.menu.menu_title else (config.menu.menu_title if config and config.menu and config.menu.menu_title else 'Наше меню') }}</h2>
     <div class="main-content">
         <div id="menu-display" class="menu-display mt-4">
             <div class="text-center text-light-50">
@@ -189,7 +189,7 @@
         {% if config.panels.get('menu', True) %}
         <div class="nav-item" data-target="menu">
             <i class="bi bi-journal-text text-light"></i>
-            <span class="text-light">Меню</span>
+            <span class="text-light">{{ business.menu.menu_title if business and business.menu and business.menu.menu_title else (config.menu.menu_title if config and config.menu and config.menu.menu_title else 'Меню') }}</span>
         </div>
         {% endif %}
         
@@ -220,7 +220,7 @@
         </div>
         <div class="nav-item" data-target="menu">
             <i class="bi bi-journal-text text-light"></i>
-            <span class="text-light">Меню</span>
+            <span class="text-light">{{ business.menu.menu_title if business and business.menu and business.menu.menu_title else (config.menu.menu_title if config and config.menu and config.menu.menu_title else 'Меню') }}</span>
         </div>
         <div class="nav-item" data-target="map">
             <i class="bi bi-geo-alt text-light"></i>
@@ -254,7 +254,7 @@
 </div>
 
 <div id="menu-info" class="info-section text-center" style="display: none; background-color: #1a1a1a;">
-    <h4 class="text-light text-center mb-4">О нашем меню</h4>
+    <h4 class="text-light text-center mb-4">О {{ business.menu.menu_title if business and business.menu and business.menu.menu_title else (config.menu.menu_title if config and config.menu and config.menu.menu_title else 'нашем меню') }}</h4>
     <div class="d-flex align-items-center justify-content-center" style="height: calc(100% - 50px);">
         <p class="text-light-50 opacity-75 text-center">
             Наше меню состоит из тщательно подобранных блюд, приготовленных из свежих ингредиентов. 
@@ -333,6 +333,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const configData = JSON.parse('{{ config|tojson if config else "null" }}');
     const businessData = JSON.parse('{{ business|tojson if business else "null" }}');
     console.log('Конфигурация:', { config: configData, business: businessData });
+    console.log('Проверка наличия меню в config:', configData?.menu);
+    console.log('Проверка наличия меню в business:', businessData?.menu);
 
     const sections = document.querySelectorAll('.section');
     const navItems = document.querySelectorAll('.nav-item[data-target]');
@@ -423,27 +425,54 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('businessData:', businessData);
         console.log('configData:', configData);
         
+        // Определяем заголовок меню из любого доступного источника
+        const menuTitle = businessData?.menu?.menu_title || configData?.menu?.menu_title || 'Наше меню';
+        console.log('Определён заголовок меню:', menuTitle);
+        
+        // Обновляем заголовок меню в основной панели
+        const menuSectionTitle = document.querySelector('#menu-section h2.panel-title');
+        if (menuSectionTitle) {
+            menuSectionTitle.textContent = menuTitle;
+            console.log('Обновлен заголовок секции меню:', menuTitle);
+        }
+        
+        // Обновляем текст в боковой навигационной панели
+        const menuNavItem = document.querySelector('.nav-item[data-target="menu"] span');
+        if (menuNavItem) {
+            menuNavItem.textContent = menuTitle;
+            console.log('Обновлен пункт меню в боковой панели:', menuTitle);
+        }
+        
+        // Обновляем заголовок в информационной панели
+        const menuInfoTitle = document.querySelector('#menu-info h4');
+        if (menuInfoTitle) {
+            menuInfoTitle.textContent = 'О ' + menuTitle.toLowerCase();
+            console.log('Обновлен заголовок информационной панели:', 'О ' + menuTitle.toLowerCase());
+        }
+
         // Добавляем заголовок и описание меню
         let menuHeader = `
             <div class="text-center mb-4">
-                <h3 class="text-light">Наше меню</h3>
+                <h3 class="text-light">${menuTitle}</h3>
                 <p class="text-light-50 opacity-75">Насладитесь нашими фирменными блюдами, приготовленными из свежих ингредиентов</p>
             </div>
         `;
         
         menuDisplay.innerHTML = menuHeader;
         
-        // Проверяем структуру данных конфигурации, если есть
+        // Получаем категории из конфигурации
+        let categories = [];
+        
+        // Проверяем наличие категорий в конфигурации
         if (configData && configData.menu && configData.menu.categories && configData.menu.categories.length > 0) {
-            console.log('Отображаем меню из configData');
-            displayMenu(configData.menu.categories);
+            console.log('Отображаем меню из configData, найдено категорий:', configData.menu.categories.length);
+            categories = configData.menu.categories;
         } 
         // Затем проверяем наличие непустого меню в бизнесе
         else if (businessData && businessData.menu && businessData.menu.categories && businessData.menu.categories.length > 0) {
-            console.log('Отображаем меню из businessData');
-            displayMenu(businessData.menu.categories);
+            console.log('Отображаем меню из businessData, найдено категорий:', businessData.menu.categories.length);
+            categories = businessData.menu.categories;
         } 
-        // Если меню нет или оно пустое в обоих местах
         else {
             console.log('Меню не найдено или пусто в обоих источниках');
             menuDisplay.innerHTML += `
@@ -453,7 +482,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="text-light-50">Меню еще не добавлено или недоступно.</p>
                 </div>
             `;
+            return;
         }
+        
+        // Выводим подробности о категориях
+        categories.forEach((category, index) => {
+            console.log(`Категория ${index+1}: ${category.name}, элементов: ${category.items ? category.items.length : 0}`);
+        });
+        
+        displayMenu(categories);
     }
     
     // Отображаем меню на странице

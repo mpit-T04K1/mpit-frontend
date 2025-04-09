@@ -43,6 +43,29 @@
                             <!-- Секция настройки меню -->
                             <div id="menu_config_section" class="mb-4">
                                 <h5 class="text-light mb-3">Настройка меню</h5>
+                                
+                                <div class="mb-4">
+                                    <label for="menu_title" class="form-label text-light">Заголовок меню <span class="badge bg-info">Важно</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="menu_title" name="menu_title" placeholder="Наше меню" style="background-color: #1a1a1a; color: white; border-color: #47c1e8;" required>
+                                        <button class="btn btn-outline-info" type="button" id="default_menu_title">По умолчанию</button>
+                                    </div>
+                                    <small class="text-light-50">Это название будет отображаться в пункте меню и в заголовке раздела меню</small>
+                                    
+                                    <div class="menu-title-examples mt-2">
+                                        <p class="text-light-50 mb-2">Примеры заголовков (нажмите, чтобы выбрать):</p>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Наше меню</span>
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Меню</span>
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Блюда и напитки</span>
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Фирменные блюда</span>
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Ассортимент</span>
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Каталог товаров</span>
+                                            <span class="badge bg-dark border border-info text-light menu-title-example" style="cursor: pointer; font-size: 0.9rem;">Что мы предлагаем</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="menu-categories">
                                     <div id="menu_categories_container">
                                         <!-- Здесь будут категории меню -->
@@ -101,7 +124,14 @@
                             <div class="preview-main" style="background-color: #1a1a1a; border-radius: 10px; padding: 15px; width: 100%;">
                                 <h5 class="text-light text-center mb-3">Основная панель</h5>
                                 <div id="preview-content" class="preview-content text-center">
-                                    <p class="text-light-50">Здесь будет отображаться содержимое выбранной секции.</p>
+                                    <p class="text-light-50">Выберите раздел в боковой панели для предпросмотра</p>
+                                    <div id="menu-title-preview" class="menu-title-preview mt-4" style="display: none;">
+                                        <h6 class="text-info">Пример заголовка меню:</h6>
+                                        <h4 id="menu-title-preview-text" class="text-light mt-2" style="position: relative; display: inline-block; padding-bottom: 10px;">
+                                            Наше меню
+                                            <span style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, #47c1e8, #e42bd4);"></span>
+                                        </h4>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -166,7 +196,7 @@
         <i class="bi bi-tools text-light"></i>
         <span class="text-light">Настройка</span>
     </div>
-    <a href="/test" class="nav-item" style="text-decoration: none;">
+    <a href="/test" class="nav-item" style="text-decoration: none;" id="preview-sidebar-link">
         <i class="bi bi-eye text-light"></i>
         <span class="text-light">Просмотр</span>
     </a>
@@ -205,6 +235,55 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Текущая конфигурация:', configData);
     console.log('Данные бизнеса:', businessData);
     
+    // Предотвращение двойных кликов на ссылках просмотра
+    let isNavigating = false;
+    
+    // Удаляем все существующие обработчики событий у ссылок (на случай, если обработчики добавляются дважды)
+    document.querySelectorAll('a[href="/test"]').forEach(el => {
+        let clonedEl = el.cloneNode(true);
+        el.parentNode.replaceChild(clonedEl, el);
+    });
+    
+    // Обработчик для всех ссылок с адресом /test
+    const previewButtons = document.querySelectorAll('a[href="/test"]');
+    console.log('Найдено кнопок предпросмотра:', previewButtons.length);
+    
+    // Добавляем единый обработчик для всех кнопок превью через делегирование событий
+    document.body.addEventListener('click', function(e) {
+        // Ищем ближайший элемент с href="/test"
+        const previewBtn = e.target.closest('a[href="/test"]');
+        
+        if (previewBtn) {
+            // Останавливаем всплытие события, чтобы предотвратить повторную обработку
+            e.stopPropagation();
+            
+            // Предотвращаем переход по умолчанию
+            e.preventDefault();
+            console.log('Клик по кнопке предпросмотра через делегирование');
+            
+            // Если уже происходит переход, просто игнорируем
+            if (isNavigating) {
+                console.log('Переход уже выполняется, повторный клик игнорируется');
+                return false;
+            }
+            
+            // Устанавливаем флаг перехода
+            isNavigating = true;
+            console.log('Выполняется переход на страницу предпросмотра...');
+            
+            // Добавляем визуальную индикацию процесса
+            const originalContent = previewBtn.innerHTML;
+            previewBtn.innerHTML = '<i class="bi bi-hourglass-split spin"></i> Переход...';
+            previewBtn.style.pointerEvents = 'none';
+            
+            // Выполняем переход с задержкой
+            setTimeout(() => {
+                console.log('Переход на страницу /test');
+                window.location.href = '/test';
+            }, 100);
+        }
+    });
+    
     // Инициализируем чекбоксы на основе данных конфигурации
     if (configData && configData.panels) {
         document.getElementById('panel_business_info').checked = configData.panels['business-info'] !== false;
@@ -212,6 +291,16 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('panel_map').checked = configData.panels['map'] !== false;
         document.getElementById('panel_contacts').checked = configData.panels['contacts'] !== false;
         document.getElementById('panel_gallery').checked = configData.panels['gallery'] !== false;
+        
+        // Инициализируем заголовок меню, если он есть в конфигурации
+        if (configData.menu && configData.menu.menu_title) {
+            console.log('Устанавливаем заголовок меню из конфигурации:', configData.menu.menu_title);
+            document.getElementById('menu_title').value = configData.menu.menu_title;
+        } else if (businessData && businessData.menu && businessData.menu.menu_title) {
+            // Если нет в конфигурации, пробуем взять из данных бизнеса
+            console.log('Устанавливаем заголовок меню из данных бизнеса:', businessData.menu.menu_title);
+            document.getElementById('menu_title').value = businessData.menu.menu_title;
+        }
     }
     
     // Обновляем предпросмотр при изменении чекбоксов
@@ -236,11 +325,50 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.preview-map').style.display = mapChecked ? 'flex' : 'none';
         document.querySelector('.preview-contacts').style.display = contactsChecked ? 'flex' : 'none';
         document.querySelector('.preview-gallery').style.display = galleryChecked ? 'flex' : 'none';
+        
+        // Обновляем заголовок меню в предпросмотре
+        if (menuChecked) {
+            const menuTitleValue = document.getElementById('menu_title').value.trim() || 'Меню';
+            const previewMenuEl = document.querySelector('.preview-menu span');
+            if (previewMenuEl) {
+                previewMenuEl.textContent = menuTitleValue;
+            }
+            
+            // Показываем пример заголовка в основной панели
+            const menuTitlePreview = document.getElementById('menu-title-preview');
+            const menuTitlePreviewText = document.getElementById('menu-title-preview-text');
+            if (menuTitlePreview && menuTitlePreviewText) {
+                menuTitlePreview.style.display = 'block';
+                menuTitlePreviewText.textContent = menuTitleValue;
+            }
+        } else {
+            // Скрываем пример заголовка, если меню отключено
+            const menuTitlePreview = document.getElementById('menu-title-preview');
+            if (menuTitlePreview) {
+                menuTitlePreview.style.display = 'none';
+            }
+        }
     }
     
     // Обработчик отправки формы
-    document.getElementById('configForm').addEventListener('submit', async function(e) {
+    let isSubmitting = false;
+    
+    // Убираем старый обработчик и добавляем новый
+    const configForm = document.getElementById('configForm');
+    const clonedForm = configForm.cloneNode(true);
+    configForm.parentNode.replaceChild(clonedForm, configForm);
+    
+    clonedForm.addEventListener('submit', async function(e) {
+        console.log('Начало обработки отправки формы');
         e.preventDefault();
+        
+        // Предотвращаем двойную отправку
+        if (isSubmitting) {
+            console.log('Форма уже отправляется, пропускаем повторную отправку');
+            return false;
+        }
+        isSubmitting = true;
+        console.log('Установлен флаг отправки формы (isSubmitting = true)');
         
         // Показываем индикатор загрузки
         const submitBtn = document.querySelector('button[type="submit"]');
@@ -257,8 +385,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const contactsChecked = document.getElementById('panel_contacts').checked;
             const galleryChecked = document.getElementById('panel_gallery').checked;
             
+            // Получаем заголовок меню, никогда не оставляем его пустым
+            const menuTitleEl = document.getElementById('menu_title');
+            const menuTitle = menuTitleEl.value.trim() || "Наше меню";
+            console.log('Сохраняем заголовок меню:', menuTitle);
+            
+            // Подсвечиваем поле заголовка, если оно пустое
+            if (!menuTitleEl.value.trim()) {
+                menuTitleEl.classList.add('border-warning');
+                menuTitleEl.value = "Наше меню";
+                setTimeout(() => {
+                    menuTitleEl.classList.remove('border-warning');
+                }, 2000);
+            }
+            
             // Собираем данные о меню, если оно активно
             let menuData = null;
+            
             if (menuChecked) {
                 const categories = [];
                 
@@ -298,11 +441,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 
-                if (categories.length > 0) {
-                    menuData = {
-                        categories: categories
-                    };
-                }
+                // Всегда создаем объект меню с заголовком, даже если категорий нет
+                menuData = {
+                    menu_title: menuTitle,
+                    categories: categories
+                };
+            } else {
+                // Даже если меню отключено, сохраняем заголовок меню
+                menuData = {
+                    menu_title: menuTitle,
+                    categories: []
+                };
             }
             
             // Формируем объект конфигурации
@@ -334,7 +483,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 alert('Конфигурация успешно сохранена');
                 // После успешного сохранения, перезагрузим страницу
+                console.log('Конфигурация успешно сохранена, перезагрузка страницы через 1 секунду');
                 setTimeout(() => {
+                    console.log('Выполняется перезагрузка страницы...');
                     window.location.reload();
                 }, 1000);
             } else {
@@ -347,6 +498,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Восстанавливаем кнопку
             submitBtn.innerHTML = originalBtnText;
             submitBtn.disabled = false;
+            // Сбрасываем флаг отправки формы
+            isSubmitting = false;
+            console.log('Сброшен флаг отправки формы (isSubmitting = false)');
         }
     });
     
@@ -364,6 +518,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Вызываем функцию при загрузке страницы и при изменении чекбокса
     toggleMenuConfigSection();
     document.getElementById('panel_menu').addEventListener('change', toggleMenuConfigSection);
+    
+    // Добавляем обновление предпросмотра при изменении заголовка меню
+    document.getElementById('menu_title').addEventListener('input', updatePreview);
+    
+    // Обработчик для кнопки "По умолчанию" заголовка меню
+    document.getElementById('default_menu_title').addEventListener('click', function() {
+        document.getElementById('menu_title').value = "Наше меню";
+        updatePreview(); // Обновляем предпросмотр после изменения
+    });
+    
+    // Обработчики для примеров заголовков меню
+    document.querySelectorAll('.menu-title-example').forEach(example => {
+        example.addEventListener('click', function() {
+            const titleValue = this.textContent;
+            document.getElementById('menu_title').value = titleValue;
+            updatePreview(); // Обновляем предпросмотр после изменения
+        });
+    });
     
     // Функция для генерации уникального ID
     function generateUniqueId() {

@@ -12,20 +12,15 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional
 
-# Импортируем маршруты
-try:
-    from app.routes import situation_center
-    from app.routes import business_registration
-except ImportError:
-    # Если не удается импортировать из пакета app, попробуем относительные импорты
-    logging.warning("Не удалось импортировать маршруты из пакета app, попытка альтернативного импорта")
-    import sys
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    try:
-        from routes import situation_center
-        from routes import business_registration
-    except ImportError:
-        logging.error("Не удалось импортировать маршруты")
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Загрузка переменных окружения из .env файла
+load_dotenv()
+
+# Определяем корневую директорию приложения
+BASE_DIR = Path(__file__).resolve().parent
 
 # Определяем модели из panel_config.py напрямую
 class MenuItem(BaseModel):
@@ -53,13 +48,6 @@ class PanelConfig(BaseModel):
     order: Optional[Dict[str, int]] = None  # ID панели -> порядок отображения
     menu: Optional[MenuConfig] = None  # Конфигурация меню
 
-# Настройка логирования
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Загрузка переменных окружения из .env файла
-load_dotenv()
-
 # Создание экземпляра FastAPI
 app = FastAPI(
     title="Qwerty.town - Модульный интерфейс",
@@ -82,9 +70,41 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Настройка шаблонов
 templates = Jinja2Templates(directory="app/templates")
 
-# Подключаем роутеры
-app.include_router(situation_center.router)
-app.include_router(business_registration.router)
+# Подключаем роутеры отдельно с обработкой ошибок для каждого
+situation_center_router = None
+business_registration_router = None
+business_router = None
+
+try:
+    from app.routes import situation_center
+    situation_center_router = situation_center.router
+    logger.info("Маршрут situation_center успешно импортирован")
+except ImportError as e:
+    logger.error(f"Ошибка при импорте situation_center: {e}")
+
+try:
+    from app.routes import business_registration
+    business_registration_router = business_registration.router
+    logger.info("Маршрут business_registration успешно импортирован")
+except ImportError as e:
+    logger.error(f"Ошибка при импорте business_registration: {e}")
+
+try:
+    from app.routes import business
+    business_router = business.router
+    logger.info("Маршрут business успешно импортирован")
+except ImportError as e:
+    logger.error(f"Ошибка при импорте business: {e}")
+
+# Подключаем доступные роутеры
+if situation_center_router:
+    app.include_router(situation_center_router)
+    
+if business_registration_router:
+    app.include_router(business_registration_router)
+    
+if business_router:
+    app.include_router(business_router)
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
@@ -356,23 +376,4 @@ async def save_config(config: PanelConfig):
         )
 
 if __name__ == "__main__":
-    # Запуск сервера
-    import sys
-    # Определяем, запущен ли скрипт как модуль или напрямую
-    module_name = "main:app"
-    if __package__ is not None:
-        # Если скрипт запущен как модуль, используем правильное имя модуля
-        module_name = f"{__name__.split('.')[0]}.main:app"
-    
-    # Настройка порта
-    port = int(os.getenv("PORT", 9090))
-    
-    logger.info(f"Запуск сервера на порту {port}, модуль: {module_name}")
-    
-    uvicorn.run(
-        module_name,
-        host="0.0.0.0",
-        port=port,
-        reload=True,
-        log_level="info",
-    ) 
+    uvicorn.run(app, host="0.0.0.0", port=8080) 

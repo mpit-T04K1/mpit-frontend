@@ -16,11 +16,11 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo Ожидание запуска приложения...
-timeout /t 5 /nobreak > nul
+timeout /t 10 /nobreak > nul
 
 rem Проверка доступности приложения
 echo Проверка доступности приложения...
-powershell -Command "try { $statusCode = (Invoke-WebRequest -Uri 'http://localhost:8006/' -UseBasicParsing).StatusCode; if ($statusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }"
+powershell -Command "try { $statusCode = (Invoke-WebRequest -Uri 'http://localhost:8080/' -UseBasicParsing).StatusCode; if ($statusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }"
 
 if %ERRORLEVEL% neq 0 (
     echo Ошибка: приложение недоступно
@@ -30,4 +30,4 @@ if %ERRORLEVEL% neq 0 (
 echo.
 echo === Проект успешно запущен ===
 echo Приложение доступно по адресу:
-echo - Веб-интерфейс: http://localhost:8006 
+echo - Веб-интерфейс: http://localhost:8080 

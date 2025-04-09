@@ -33,15 +33,42 @@
     "menu": {
       "categories": [
         {
-          "id": "1",
-          "name": "Горячие напитки",
+          "id": "starters",
+          "name": "Закуски",
           "items": [
             {
-              "id": "1",
-              "name": "Капучино",
-              "price": 250.0,
-              "description": "Классический кофейный напиток на основе эспрессо с добавлением молока",
-              "image": null
+              "id": "bruschetta",
+              "name": "Брускетта с томатами",
+              "price": 350,
+              "description": "Хрустящий хлеб с томатами, базиликом и оливковым маслом",
+              "image": "/static/images/placeholder-food.png"
+            },
+            {
+              "id": "carpaccio",
+              "name": "Карпаччо из говядины",
+              "price": 450,
+              "description": "Тонко нарезанная говядина с рукколой, пармезаном и бальзамическим соусом",
+              "image": "/static/images/placeholder-food.png"
+            }
+          ]
+        },
+        {
+          "id": "main",
+          "name": "Основные блюда",
+          "items": [
+            {
+              "id": "steak",
+              "name": "Стейк Рибай",
+              "price": 1200,
+              "description": "Премиальная говядина с овощами гриль и соусом на выбор",
+              "image": "/static/images/placeholder-food.png"
+            },
+            {
+              "id": "pasta",
+              "name": "Паста Карбонара",
+              "price": 550,
+              "description": "Классическая паста с беконом, яйцом и пармезаном",
+              "image": "/static/images/placeholder-food.png"
             }
           ]
         }
@@ -624,8 +651,7 @@
             }
           ]
         }
-      ],
-      "menu_title": "Наше фирменное меню"
+      ]
     },
     "gallery": []
   },
@@ -659,41 +685,7 @@
       }
     },
     "menu": {
-      "categories": [
-        {
-          "id": "id_kdrwnynya",
-          "name": "Джинсы Летние",
-          "items": [
-            {
-              "id": "id_ylijhl4q3",
-              "name": "Хлопковые",
-              "price": 2500.0,
-              "description": "В налиии S, M, L",
-              "image": null
-            },
-            {
-              "id": "id_n6lh3s9wf",
-              "name": "Стрэтч",
-              "price": 2700.0,
-              "description": "В наличии M, L, XL",
-              "image": null
-            }
-          ]
-        },
-        {
-          "id": "id_z3zmjkbfh",
-          "name": "Джинсы Зимние",
-          "items": [
-            {
-              "id": "id_kzc2uo0b1",
-              "name": "С начёсом",
-              "price": 2300.0,
-              "description": "В наличии L, XL",
-              "image": null
-            }
-          ]
-        }
-      ]
+      "categories": []
     },
     "gallery": []
   }

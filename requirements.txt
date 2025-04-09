@@ -16,3 +16,5 @@ pydantic-settings
 watchfiles
 python-dotenv
 requests
+sqlalchemy
+asyncpg

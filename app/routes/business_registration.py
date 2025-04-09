@@ -96,6 +96,7 @@ async def get_business(business_id: int):
             "description": res.description,
             "logo": res.logo
         }
+        return record
 
 
 @router.post("/generate-logo")

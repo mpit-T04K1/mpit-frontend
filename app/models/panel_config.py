@@ -17,6 +17,7 @@ class MenuCategory(BaseModel):
 
 class MenuConfig(BaseModel):
     """Модель конфигурации меню"""
+    menu_title: Optional[str] = "Наше меню"  # Заголовок меню (пользовательский)
     categories: List[MenuCategory] = Field(default_factory=list)
 
 class PanelConfig(BaseModel):

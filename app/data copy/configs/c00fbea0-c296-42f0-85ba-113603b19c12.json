@@ -1,0 +1,48 @@
+{
+  "business_id": "c00fbea0-c296-42f0-85ba-113603b19c12",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": false,
+    "gallery": false
+  },
+  "order": null,
+  "menu": {
+    "categories": [
+      {
+        "id": "id_kdrwnynya",
+        "name": "Джинсы Летние",
+        "items": [
+          {
+            "id": "id_ylijhl4q3",
+            "name": "Хлопковые",
+            "price": 2500.0,
+            "description": "В налиии S, M, L",
+            "image": null
+          },
+          {
+            "id": "id_n6lh3s9wf",
+            "name": "Стрэтч",
+            "price": 2700.0,
+            "description": "В наличии M, L, XL",
+            "image": null
+          }
+        ]
+      },
+      {
+        "id": "id_z3zmjkbfh",
+        "name": "Джинсы Зимние",
+        "items": [
+          {
+            "id": "id_kzc2uo0b1",
+            "name": "С начёсом",
+            "price": 2300.0,
+            "description": "В наличии L, XL",
+            "image": null
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -116,8 +116,19 @@ async def save_config(config: PanelConfig):
                         category_dict = category.dict()
                         categories_dict.append(category_dict)
                     
-                    # Обновляем меню
-                    businesses[config.business_id]["menu"] = {"categories": categories_dict}
+                    # Обновляем меню со всеми атрибутами, включая menu_title
+                    menu_data = {
+                        "categories": categories_dict
+                    }
+                    
+                    # Всегда добавляем menu_title, даже если оно пустое
+                    if hasattr(config.menu, 'menu_title'):
+                        menu_data["menu_title"] = config.menu.menu_title or "Наше меню"
+                    else:
+                        menu_data["menu_title"] = "Наше меню"  # Значение по умолчанию
+                    
+                    # Обновляем меню в объекте бизнеса
+                    businesses[config.business_id]["menu"] = menu_data
                     
                     # Сохраняем обновленные данные
                     with open("app/data/businesses.json", "w", encoding="utf-8") as f:

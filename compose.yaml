@@ -8,6 +8,26 @@ services:
     environment:
       MAIN_PATH: ${MAIN_PATH}
       YANDEX_MAPS_API_KEY: ${YANDEX_MAPS_API_KEY}
+      DATABASE_URL: ${DATABASE_URL}
     restart: unless-stopped
     volumes:
       - ./app:/app/app
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14
+    container_name: mpit-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: qwertytown
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  db_data:
+    name: postgres-data

@@ -1,0 +1,34 @@
+{
+  "business_id": "cafe-neon",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": true,
+    "gallery": true
+  },
+  "order": {
+    "business-info": 1,
+    "menu": 2,
+    "map": 3,
+    "contacts": 4,
+    "gallery": 5
+  },
+  "menu": {
+    "categories": [
+      {
+        "id": "1",
+        "name": "Горячие напитки",
+        "items": [
+          {
+            "id": "1",
+            "name": "Капучино",
+            "price": 250.0,
+            "description": "Классический кофейный напиток на основе эспрессо с добавлением молока",
+            "image": null
+          }
+        ]
+      }
+    ]
+  }
+}

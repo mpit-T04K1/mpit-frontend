@@ -29,6 +29,7 @@ class MenuCategory(BaseModel):
 
 class MenuConfig(BaseModel):
     """Модель конфигурации меню"""
+    menu_title: Optional[str] = "Наше меню"  # Добавляем поле menu_title со значением по умолчанию
     categories: List[MenuCategory] = Field(default_factory=list)
 
 class PanelConfig(BaseModel):
@@ -37,9 +38,6 @@ class PanelConfig(BaseModel):
     panels: Dict[str, bool]  # ID панели -> активна/неактивна
     order: Optional[Dict[str, int]] = None  # ID панели -> порядок отображения
     menu: Optional[MenuConfig] = None  # Конфигурация меню
-
-# Импортируем маршруты
-from app.routes import business, business_registration, situation_center
 
 # Настройка логирования
 logging.basicConfig(level=logging.DEBUG)
@@ -51,6 +49,22 @@ load_dotenv()
 # Определяем корневую директорию приложения
 BASE_DIR = Path(__file__).resolve().parent
 logger.debug(f"Корневая директория приложения: {BASE_DIR}")
+
+# Импортируем маршруты после настройки логирования и загрузки переменных окружения
+try:
+    from app.routes import business, business_registration, situation_center
+    logger.debug("Маршруты успешно импортированы из app.routes")
+except ImportError as e:
+    logger.error(f"Ошибка при импорте маршрутов из app.routes: {e}")
+    # Используем относительные импорты как запасной вариант
+    try:
+        import sys
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from routes import business, business_registration, situation_center
+        logger.debug("Маршруты успешно импортированы из routes")
+    except ImportError as e:
+        logger.error(f"Ошибка при импорте маршрутов из routes: {e}")
+        raise ImportError("Не удалось импортировать необходимые маршруты")
 
 # Создание экземпляра FastAPI
 app = FastAPI(
@@ -250,6 +264,21 @@ async def test(request: Request):
                                     logger.debug(f"Категории меню не найдены")
                             else:
                                 logger.debug(f"Меню в конфигурации отсутствует")
+                                
+                            # Проверяем, что бизнес имеет те же данные меню, что и в конфигурации
+                            if 'menu' in config_dict and config_dict['menu'] is not None:
+                                # Сравниваем меню в бизнесе и конфигурации
+                                if 'menu' not in business or business['menu'] != config_dict['menu']:
+                                    logger.debug(f"Меню в бизнесе отличается от меню в конфигурации, обновляем")
+                                    business['menu'] = config_dict['menu']
+                                    
+                                    # Сохраняем обновленные данные бизнеса
+                                    with open(business_file, "w", encoding="utf-8") as f:
+                                        json.dump(businesses_data, f, ensure_ascii=False, indent=2)
+                                    
+                                    logger.debug(f"Данные меню в бизнесе обновлены")
+                                else:
+                                    logger.debug(f"Меню в бизнесе соответствует меню в конфигурации")
                     except Exception as e:
                         logger.error(f"Ошибка загрузки конфигурации: {e}")
                 
@@ -266,10 +295,14 @@ async def test(request: Request):
                             "gallery": True
                         },
                         "order": None,
-                        "menu": None
+                        "menu": {
+                            "menu_title": "Наше меню",
+                            "categories": []
+                        }
                     }
                     
                 logger.debug(f"Структура config_dict: {json.dumps(config_dict, ensure_ascii=False)[:200]}...")
+                logger.debug(f"Проверка menu в business: {json.dumps(business.get('menu', {}), ensure_ascii=False)[:200]}...")
                 
                 return templates.TemplateResponse(
                     "business.html", 
@@ -460,6 +493,12 @@ async def save_config(config: PanelConfig):
         # Путь к файлу конфигурации
         config_path = os.path.join(config_dir, f"{config.business_id}.json")
         
+        # Убедимся, что menu_title всегда есть в конфигурации
+        if config.menu and not hasattr(config.menu, 'menu_title'):
+            config.menu.menu_title = "Наше меню"
+        elif config.menu and hasattr(config.menu, 'menu_title') and not config.menu.menu_title:
+            config.menu.menu_title = "Наше меню"
+            
         # Сохраняем конфигурацию
         with open(config_path, "w", encoding="utf-8") as f:
             json.dump(config.dict(), f, ensure_ascii=False, indent=2)
@@ -467,8 +506,10 @@ async def save_config(config: PanelConfig):
         logger.info(f"Сохранена конфигурация для бизнеса {config.business_id}")
         
         # Обновляем данные бизнеса, если есть меню в конфигурации
-        if config.menu and hasattr(config.menu, 'categories'):
+        if config.menu is not None:
             try:
+                logger.debug(f"Обновление меню в данных бизнеса. Данные меню: {config.menu.dict() if config.menu else 'None'}")
+                
                 # Путь к файлу с данными бизнеса
                 business_file = os.path.join(BASE_DIR, "data", "businesses.json")
                 
@@ -481,20 +522,38 @@ async def save_config(config: PanelConfig):
                     if config.business_id in businesses:
                         # Преобразуем категории меню в формат для JSON
                         categories_dict = []
-                        for category in config.menu.categories:
-                            category_dict = category.dict()
-                            categories_dict.append(category_dict)
+                        if config.menu.categories:
+                            for category in config.menu.categories:
+                                category_dict = category.dict()
+                                categories_dict.append(category_dict)
                         
-                        # Обновляем меню
-                        businesses[config.business_id]["menu"] = {"categories": categories_dict}
+                        # Получаем заголовок меню из конфигурации или используем значение по умолчанию
+                        menu_title = getattr(config.menu, 'menu_title', "Наше меню") or "Наше меню"
+                        
+                        # Обновляем меню со всеми атрибутами, включая menu_title
+                        menu_data = {
+                            "categories": categories_dict,
+                            "menu_title": menu_title
+                        }
+                        
+                        logger.debug(f"Обновление меню бизнеса с данными: {menu_data}")
+                        
+                        # Обновляем меню в объекте бизнеса
+                        businesses[config.business_id]["menu"] = menu_data
                         
                         # Сохраняем обновленные данные
                         with open(business_file, "w", encoding="utf-8") as f:
                             json.dump(businesses, f, ensure_ascii=False, indent=2)
                         
                         logger.info(f"Обновлены данные меню в файле бизнеса для {config.business_id}")
+                    else:
+                        logger.warning(f"Бизнес с ID {config.business_id} не найден в файле бизнесов")
+                else:
+                    logger.error(f"Файл бизнесов не найден: {business_file}")
             except Exception as e:
                 logger.error(f"Ошибка при обновлении данных бизнеса: {e}")
+        else:
+            logger.debug("Меню отсутствует в конфигурации, данные бизнеса не обновляются")
         
         return {"status": "success", "message": "Конфигурация успешно сохранена"}
     except Exception as e:

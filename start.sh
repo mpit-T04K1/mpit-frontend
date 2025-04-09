@@ -17,11 +17,11 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Ожидание запуска приложения..."
-sleep 5
+sleep 10
 
 # Проверка доступности приложения
 echo "Проверка доступности приложения..."
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8006/)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/)
 
 if [ "$RESPONSE" != "200" ]; then
     echo "Ошибка: приложение недоступно, код ответа: $RESPONSE"
@@ -31,5 +31,4 @@ fi
 echo ""
 echo "=== Проект успешно запущен ==="
 echo "Приложение доступно по адресу:"
-echo "- Веб-интерфейс: http://localhost:8006"
-echo "- RabbitMQ Management: http://localhost:15672" 
+echo "- Веб-интерфейс: http://localhost:8080" 
