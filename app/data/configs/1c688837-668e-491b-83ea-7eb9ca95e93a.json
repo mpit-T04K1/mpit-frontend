@@ -1,0 +1,28 @@
+{
+  "business_id": "1c688837-668e-491b-83ea-7eb9ca95e93a",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": true,
+    "gallery": false
+  },
+  "order": null,
+  "menu": {
+    "categories": [
+      {
+        "id": "id_0aaf6exwn",
+        "name": "апролд",
+        "items": [
+          {
+            "id": "id_svexku3z9",
+            "name": "вапро",
+            "price": 2345.0,
+            "description": "апролд",
+            "image": null
+          }
+        ]
+      }
+    ]
+  }
+}

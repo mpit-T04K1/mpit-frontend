@@ -696,5 +696,277 @@
       ]
     },
     "gallery": []
+  },
+  "8b1a7a47-34a5-4203-8600-b922c9a334b4": {
+    "id": "8b1a7a47-34a5-4203-8600-b922c9a334b4",
+    "name": "Джинсы",
+    "type": "shop",
+    "logo": "/static/uploads/logos/8b1a7a47-34a5-4203-8600-b922c9a334b4.png",
+    "description": "Представляем вашему вниманию стильные и качественные джинсы – неотъемлемый элемент гардероба каждого модника! Синий цвет наших джинсов подчеркнет ваш индивидуальный стиль и добавит образу уверенности. Мы тщательно отбираем материалы и следим за каждой деталью, чтобы наши джинсы были не только красивыми, но и комфортными в носке. Создайте свой уникальный образ с нашими джинсами уже сегодня!",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "г. Калининград, ул. Демьяна Бедного 2Б",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "2426ea8a-f4d1-4823-bc17-05a4cd6cc58f": {
+    "id": "2426ea8a-f4d1-4823-bc17-05a4cd6cc58f",
+    "name": "dftyuiop",
+    "type": "shop",
+    "logo": "/static/uploads/logos/2426ea8a-f4d1-4823-bc17-05a4cd6cc58f.png",
+    "description": "Добро пожаловать в мир инноваций и передовых технологий! Наша компания – это не просто бизнес, а настоящее сообщество профессионалов, стремящихся к совершенству во всем, что мы делаем. Мы гордимся тем, что предлагаем нашим клиентам уникальные решения, которые помогают им достигать новых высот в своем деле.",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "г. Калининград, ул. Демьяна Бедного 2Б",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "f7a617e2-c920-4a70-8e1d-42f0ed26fead": {
+    "id": "f7a617e2-c920-4a70-8e1d-42f0ed26fead",
+    "name": "345е6н7г8шщзщшг7н6ек",
+    "type": "shop",
+    "logo": "/static/uploads/logos/f7a617e2-c920-4a70-8e1d-42f0ed26fead.png",
+    "description": "апенгшрпмить",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "вкенгшлогрп",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "admin@ios.app",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "13fa1357-28b0-4561-ad9b-93735df7e81b": {
+    "id": "13fa1357-28b0-4561-ad9b-93735df7e81b",
+    "name": "dftyuiopлпршршл3у45678",
+    "type": "shop",
+    "logo": "/static/uploads/logos/13fa1357-28b0-4561-ad9b-93735df7e81b.png",
+    "description": "вапролд",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "прол",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "399b50b6-b11b-486a-aae4-b3b4c2c834f0": {
+    "id": "399b50b6-b11b-486a-aae4-b3b4c2c834f0",
+    "name": "dftyuiopлпршршл3у45678",
+    "type": "shop",
+    "logo": "/static/uploads/logos/399b50b6-b11b-486a-aae4-b3b4c2c834f0.png",
+    "description": "вапролд",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "прол",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "255c86d6-70b7-4e36-98b7-bf8f6c9e66b5": {
+    "id": "255c86d6-70b7-4e36-98b7-bf8f6c9e66b5",
+    "name": "Тестов",
+    "type": "bar",
+    "logo": "/static/uploads/logos/255c86d6-70b7-4e36-98b7-bf8f6c9e66b5.png",
+    "description": "вчапрнгошл",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "вапро",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+79089934001",
+      "email": "it@eazyan.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "2f8ad24a-7880-404f-96a5-fb82368ab8cf": {
+    "id": "2f8ad24a-7880-404f-96a5-fb82368ab8cf",
+    "name": "dftyuiopлпршршл3у45678",
+    "type": "bar",
+    "logo": "/static/uploads/logos/2f8ad24a-7880-404f-96a5-fb82368ab8cf.png",
+    "description": "ывапролдждмасвччвапршлдж",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "апролд",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
+  },
+  "1c688837-668e-491b-83ea-7eb9ca95e93a": {
+    "id": "1c688837-668e-491b-83ea-7eb9ca95e93a",
+    "name": "dftyuiopлпршршл3у45678",
+    "type": "bar",
+    "logo": "/static/uploads/logos/1c688837-668e-491b-83ea-7eb9ca95e93a.png",
+    "description": "ывапролдждмасвччвапршлдж",
+    "highlights": [
+      "Новый бизнес",
+      "Открыт для клиентов"
+    ],
+    "address": "апролд",
+    "working_hours": {
+      "monday": "09:00 - 18:00",
+      "tuesday": "09:00 - 18:00",
+      "wednesday": "09:00 - 18:00",
+      "thursday": "09:00 - 18:00",
+      "friday": "09:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Закрыто"
+    },
+    "contacts": {
+      "phone": "+71234567890",
+      "email": "test@test.ru",
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "vk": ""
+      }
+    },
+    "menu": {
+      "categories": []
+    },
+    "gallery": []
   }
 }

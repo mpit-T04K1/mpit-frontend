@@ -1,0 +1,14 @@
+{
+  "business_id": "255c86d6-70b7-4e36-98b7-bf8f6c9e66b5",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": false,
+    "contacts": false,
+    "gallery": false
+  },
+  "order": null,
+  "menu": {
+    "categories": []
+  }
+}

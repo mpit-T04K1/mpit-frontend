@@ -1,0 +1,15 @@
+{
+  "business_id": "cb1684dc-e73f-4de1-9f89-a511f562e40b",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": true,
+    "gallery": true
+  },
+  "order": null,
+  "menu": {
+    "menu_title": "Наше меню",
+    "categories": []
+  }
+}

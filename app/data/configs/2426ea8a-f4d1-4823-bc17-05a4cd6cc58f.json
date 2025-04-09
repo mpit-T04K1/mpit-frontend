@@ -1,0 +1,28 @@
+{
+  "business_id": "2426ea8a-f4d1-4823-bc17-05a4cd6cc58f",
+  "panels": {
+    "business-info": true,
+    "menu": true,
+    "map": true,
+    "contacts": false,
+    "gallery": false
+  },
+  "order": null,
+  "menu": {
+    "categories": [
+      {
+        "id": "id_0b4hcijf0",
+        "name": "ипав",
+        "items": [
+          {
+            "id": "id_8vdjwv9yg",
+            "name": "кеуц",
+            "price": 123.0,
+            "description": "квуыф",
+            "image": null
+          }
+        ]
+      }
+    ]
+  }
+}

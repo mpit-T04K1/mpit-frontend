@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 import logging
 import uvicorn
 import os
@@ -240,92 +240,16 @@ async def test(request: Request):
             if businesses_data:
                 # Получаем последний добавленный бизнес (последний ключ в словаре)
                 last_business_id = list(businesses_data.keys())[-1]
-                business = businesses_data[last_business_id]
-                logger.debug(f"Загружен бизнес: {business.get('name', 'Неизвестный бизнес')}")
-                
-                # Пытаемся загрузить конфигурацию для бизнеса
-                config_file = os.path.join(BASE_DIR, "data", "configs", f"{business['id']}.json")
-                config_dict = None
-                
-                if os.path.exists(config_file):
-                    try:
-                        with open(config_file, "r", encoding="utf-8") as f:
-                            config_dict = json.load(f)
-                            logger.debug(f"Загружена конфигурация для бизнеса")
-                            
-                            # Проверяем структуру конфигурации напрямую
-                            if 'menu' in config_dict and config_dict['menu'] is not None:
-                                logger.debug(f"Меню найдено в конфигурации")
-                                if 'categories' in config_dict['menu'] and config_dict['menu']['categories']:
-                                    logger.debug(f"Найдено категорий меню: {len(config_dict['menu']['categories'])}")
-                                    for i, category in enumerate(config_dict['menu']['categories']):
-                                        logger.debug(f"Категория {i+1}: {category['name']}, элементов: {len(category['items']) if 'items' in category and category['items'] else 0}")
-                                else:
-                                    logger.debug(f"Категории меню не найдены")
-                            else:
-                                logger.debug(f"Меню в конфигурации отсутствует")
-                                
-                            # Проверяем, что бизнес имеет те же данные меню, что и в конфигурации
-                            if 'menu' in config_dict and config_dict['menu'] is not None:
-                                # Сравниваем меню в бизнесе и конфигурации
-                                if 'menu' not in business or business['menu'] != config_dict['menu']:
-                                    logger.debug(f"Меню в бизнесе отличается от меню в конфигурации, обновляем")
-                                    business['menu'] = config_dict['menu']
-                                    
-                                    # Сохраняем обновленные данные бизнеса
-                                    with open(business_file, "w", encoding="utf-8") as f:
-                                        json.dump(businesses_data, f, ensure_ascii=False, indent=2)
-                                    
-                                    logger.debug(f"Данные меню в бизнесе обновлены")
-                                else:
-                                    logger.debug(f"Меню в бизнесе соответствует меню в конфигурации")
-                    except Exception as e:
-                        logger.error(f"Ошибка загрузки конфигурации: {e}")
-                
-                # Если конфигурация не найдена, создаем значение по умолчанию
-                if config_dict is None:
-                    logger.debug("Конфигурация не найдена, создаем значение по умолчанию")
-                    config_dict = {
-                        "business_id": business["id"],
-                        "panels": {
-                            "business-info": True,
-                            "menu": True,
-                            "map": True,
-                            "contacts": True,
-                            "gallery": True
-                        },
-                        "order": None,
-                        "menu": {
-                            "menu_title": "Наше меню",
-                            "categories": []
-                        }
-                    }
-                    
-                logger.debug(f"Структура config_dict: {json.dumps(config_dict, ensure_ascii=False)[:200]}...")
-                logger.debug(f"Проверка menu в business: {json.dumps(business.get('menu', {}), ensure_ascii=False)[:200]}...")
-                
-                return templates.TemplateResponse(
-                    "business.html", 
-                    {"request": request, "business": business, "config": config_dict}
-                )
-            else:
-                logger.warning("Файл с данными бизнеса пуст")
-                return templates.TemplateResponse(
-                    "business.html", 
-                    {"request": request, "message": "Нет данных о бизнесе"}
-                )
-        else:
-            logger.warning(f"Файл {business_file} не найден")
-            return templates.TemplateResponse(
-                "business.html", 
-                {"request": request, "message": "Файл с данными бизнеса не найден"}
-            )
+                # Перенаправляем на страницу бизнеса с его ID
+                return RedirectResponse(url=f"/business/view/{last_business_id}", status_code=303)
+        
+        # Если не найден бизнес, перенаправляем на главную
+        return RedirectResponse(url="/", status_code=303)
+    
     except Exception as e:
-        logger.error(f"Ошибка при обработке запроса к /test: {e}")
-        return templates.TemplateResponse(
-            "business.html", 
-            {"request": request, "message": f"Произошла ошибка: {e}"}
-        )
+        logger.error(f"Ошибка при перенаправлении: {e}")
+        # В случае ошибки также перенаправляем на главную
+        return RedirectResponse(url="/", status_code=303)
 
 @app.get("/test/constructor", response_class=HTMLResponse)
 async def test_constructor_page(request: Request):
@@ -345,60 +269,16 @@ async def test_constructor_page(request: Request):
             if businesses_data:
                 # Получаем последний добавленный бизнес (последний ключ в словаре)
                 last_business_id = list(businesses_data.keys())[-1]
-                business = businesses_data[last_business_id]
-                logger.debug(f"Загружен бизнес: {business.get('name', 'Неизвестный бизнес')}")
-                
-                # Пытаемся загрузить конфигурацию для бизнеса
-                config_file = os.path.join(BASE_DIR, "data", "configs", f"{business['id']}.json")
-                config = None
-                
-                if os.path.exists(config_file):
-                    try:
-                        with open(config_file, "r", encoding="utf-8") as f:
-                            config = json.load(f)
-                            logger.debug(f"Загружена конфигурация для бизнеса")
-                    except Exception as e:
-                        logger.error(f"Ошибка загрузки конфигурации: {e}")
-                
-                return templates.TemplateResponse(
-                    "constructor.html",
-                    {
-                        "request": request, 
-                        "business": business,
-                        "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", ""),
-                        "config": config
-                    }
-                )
-            else:
-                logger.warning("Файл с данными бизнеса пуст")
-                return templates.TemplateResponse(
-                    "constructor.html", 
-                    {
-                        "request": request,
-                        "error": "Нет зарегистрированных бизнесов",
-                        "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
-                    }
-                )
-        else:
-            logger.warning(f"Файл {business_file} не найден")
-            return templates.TemplateResponse(
-                "constructor.html", 
-                {
-                    "request": request,
-                    "error": "Файл данных не найден",
-                    "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
-                }
-            )
+                # Перенаправляем на страницу конструктора бизнеса с его ID
+                return RedirectResponse(url=f"/business/view/{last_business_id}/constructor", status_code=303)
+        
+        # Если не найден бизнес, перенаправляем на главную
+        return RedirectResponse(url="/", status_code=303)
+    
     except Exception as e:
-        logger.error(f"Ошибка при обработке запроса к /test/constructor: {e}")
-        return templates.TemplateResponse(
-            "constructor.html", 
-            {
-                "request": request,
-                "error": str(e),
-                "yandex_maps_api_key": os.getenv("YANDEX_MAPS_API_KEY", "")
-            }
-        )
+        logger.error(f"Ошибка при перенаправлении: {e}")
+        # В случае ошибки также перенаправляем на главную
+        return RedirectResponse(url="/", status_code=303)
 
 @app.get("/constructor", response_class=HTMLResponse)
 async def constructor_page(request: Request):

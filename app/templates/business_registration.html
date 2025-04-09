@@ -158,15 +158,20 @@ document.getElementById('businessRegistrationForm').addEventListener('submit', a
         });
         
         if (response.ok) {
-            const result = await response.json();
-            window.location.href = `/business/${result.business_id}`;
+            const data = await response.json();
+            // Перенаправляем на страницу просмотра бизнеса с полученным ID
+            window.location.href = `/business/view/${data.business_id}`;
         } else {
             const error = await response.json();
             alert(`Ошибка: ${error.detail}`);
+            // В случае ошибки также перенаправляем на главную
+            window.location.href = '/';
         }
     } catch (error) {
         alert('Произошла ошибка при отправке формы');
         console.error(error);
+        // В случае исключения также перенаправляем на главную
+        window.location.href = '/';
     }
 });
 
